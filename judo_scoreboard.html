@@ -13,6 +13,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="柔道審判" />
+  <meta name="screen-orientation" content="landscape" />
   <link rel="apple-touch-icon" href="./icons/icon-192.png" />
   <meta name="theme-color" content="#501313" />
   <style>
@@ -115,6 +116,7 @@ body {
 .WinBanner.IsOpen         { display: flex; }
 .WinBanner.IsRedWin       { background: rgba(162, 45, 45, 0.92); }
 .WinBanner.IsWhiteWin     { background: rgba(0, 0, 0, 0.70); }
+.WinBanner.IsDraw         { background: rgba(30, 60, 100, 0.88); }
 .WinBox {
   background: #fff;
   border-radius: 12px;
@@ -653,12 +655,13 @@ body {
   top: calc(100% + 4px);
   right: 0;
   background: #fff;
-  border: 1px solid #e0e0e0;
+  border: 1.5px solid #ccc;
   border-radius: 10px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
   min-width: 140px;
   z-index: 500;
   overflow: hidden;
+  opacity: 1;
 }
 .SpGearMenu.IsOpen { display: block; }
 .SpGearMenuItem {
@@ -677,6 +680,27 @@ body {
 .SpGearMenuItem:last-child { border-bottom: none; }
 .SpGearMenuItem:hover { background: #f5f5f5; }
 .SpGearMenuItem--Danger { color: #A32D2D; }
+.SpGearMenuItem--GS     { color: #185FA5; font-weight: 700; }
+
+/* GS中テキスト */
+.SpGsLive {
+  background: #A32D2D;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: 4px;
+  padding: 2px 6px;
+  animation: PulseYuko 0.8s infinite;
+}
+.GsLive {
+  background: #A32D2D;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: 4px;
+  padding: 2px 8px;
+  animation: PulseYuko 0.8s infinite;
+}
 
 /* スマホ メインエリア */
 .SpMain {
@@ -826,6 +850,41 @@ body {
 }
 .SpLogDelBtn:hover { color: #A32D2D; }
 
+/* 試合終了音セレクト */
+.EndSoundSelect {
+  padding: 6px 10px;
+  border: 1px solid #d0d0d0;
+  border-radius: 8px;
+  font-size: 13px;
+  background: #fff;
+  color: #333;
+  cursor: pointer;
+}
+
+/* ===== ローカルルール チェックボックス ===== */
+.LocalRuleCheck {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #185FA5;
+  flex-shrink: 0;
+}
+.LocalRuleItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  margin-bottom: 6px;
+  background: #fafafa;
+  transition: background 0.15s;
+}
+.LocalRuleItem:has(.LocalRuleCheck:checked) {
+  background: #f0f6ff;
+  border-color: #185FA5;
+}
+
 </style>
 </head>
 <body>
@@ -958,15 +1017,17 @@ body {
       </div>
     </div>
 
-    <!-- 有効判定（投げ） -->
+
+    <!-- 試合終了音 -->
     <div class="SetupRow">
-      <label>有効判定（投げ）</label>
-      <div class="SetupCtrl">
-        <button class="SetupAdjBtn" onclick="Adj('yukoThrowSec', -1)">−</button>
-        <span class="SetupVal" id="SetupYukoThrowSec">5</span>
-        <span class="SetupUnit">秒</span>
-        <button class="SetupAdjBtn" onclick="Adj('yukoThrowSec', 1)">+</button>
-      </div>
+      <label>試合終了音</label>
+      <select class="EndSoundSelect" id="EndSoundSelect">
+        <option value="beep">🔔 ビープ音</option>
+        <option value="gong">🔊 ゴング</option>
+        <option value="bell">🔔 ベル</option>
+        <option value="buzzer">📣 ブザー</option>
+        <option value="none">🔇 なし</option>
+      </select>
     </div>
 
     <!-- ローカルルール -->
@@ -993,6 +1054,7 @@ body {
     <div class="PcTimerBar">
       <span class="TimerVal" id="PcTimerVal">4:00</span>
       <span class="GsTag"    id="PcGsTag">GS</span>
+      <span class="GsLive"   id="PcGsLive" style="display:none">中</span>
       <button class="PcRuleBtn" onclick="OpenRule()">📋 ルール</button>
     </div>
 
@@ -1099,6 +1161,7 @@ body {
       <div class="SpTimerBlock">
         <span class="SpTimer" id="SpTimerVal">4:00</span>
         <span class="SpGsTag" id="SpGsTag">GS</span>
+        <span class="SpGsLive" id="SpGsLive" style="display:none">中</span>
       </div>
       <!-- 赤ランプ（左1/4） -->
       <div class="SpLampRed" id="SpRedLamp"></div>
@@ -1109,6 +1172,7 @@ body {
         <button class="SpGearBtn" id="SpGearBtn" onclick="ToggleGearMenu()">⚙️</button>
         <div class="SpGearMenu" id="SpGearMenu">
           <button class="SpGearMenuItem"           onclick="OpenRule();CloseGearMenu()">📋 ルールブック</button>
+          <button class="SpGearMenuItem SpGearMenuItem--GS" id="SpGsMenuBtn" onclick="ToggleGS();CloseGearMenu()">⚡ GS開始</button>
           <button class="SpGearMenuItem"           onclick="DoBack();CloseGearMenu()">⚙️ 設定に戻る</button>
           <button class="SpGearMenuItem SpGearMenuItem--Danger" onclick="DoResetMatch();CloseGearMenu()">🔄 リセット</button>
         </div>
@@ -1287,6 +1351,23 @@ function CheckLayout() {
 window.addEventListener('resize', CheckLayout);
 window.addEventListener('orientationchange', () => { setTimeout(CheckLayout, 100); });
 
+function LockLandscape() {
+  // スマホ版で横向きに固定
+  if (screen.orientation && screen.orientation.lock) {
+    screen.orientation.lock('landscape').catch(() => {});
+  } else if (window.screen.lockOrientation) {
+    window.screen.lockOrientation('landscape');
+  }
+}
+
+function UnlockOrientation() {
+  if (screen.orientation && screen.orientation.unlock) {
+    screen.orientation.unlock();
+  } else if (window.screen.unlockOrientation) {
+    window.screen.unlockOrientation();
+  }
+}
+
 function ApplyScale() {
   const raw   = parseFloat(El('ScaleInput').value) || 100;
   const scale = Math.min(300, Math.max(50, raw)) / 100;
@@ -1361,7 +1442,7 @@ function ConfirmAddRule() {
   else if (type === 'wazaSec') { Cfg.wazaSec      = val; El('SetupWazaSec').textContent  = val; }
   else if (type === 'yukoSec') { Cfg.yukoSec      = val; El('SetupYukoSec').textContent  = val; }
   else if (type === 'yukoThrowSec') { Cfg.yukoThrowSec = val; El('SetupYukoThrowSec').textContent = val; }
-  CustomRules.push({ type, label: typeLabels[type], val, unit, note });
+  CustomRules.push({ type, label: typeLabels[type], val, unit, note, enabled: true });
   RenderCustomRules();
   CloseAddRule();
 }
@@ -1372,7 +1453,8 @@ function RenderCustomRules() {
   CustomRules.forEach((r, i) => {
     const d = document.createElement('div');
     d.className = 'LocalRuleItem';
-    d.innerHTML = `<span class="LocalRuleLabel">${r.label}${r.note ? ` <span style="color:#aaa;font-size:11px;">（${r.note}）</span>` : ''}</span><span class="LocalRuleVal">${r.val}${r.unit}</span><button class="LocalRuleDelBtn" onclick="DeleteCustomRule(${i})">×</button>`;
+    const checked = r.enabled ? 'checked' : '';
+    d.innerHTML = `<input type="checkbox" class="LocalRuleCheck" id="rule_${i}" ${checked} onchange="ToggleCustomRule(${i})" /><label for="rule_${i}" class="LocalRuleLabel">${r.label}${r.note ? ` <span style="color:#aaa;font-size:11px;">（${r.note}）</span>` : ''}</label><span class="LocalRuleVal">${r.val}${r.unit}</span><button class="LocalRuleDelBtn" onclick="DeleteCustomRule(${i})">×</button>`;
     c.appendChild(d);
   });
 }
@@ -1382,7 +1464,98 @@ function DeleteCustomRule(i) {
   RenderCustomRules();
 }
 
+function ToggleCustomRule(i) {
+  CustomRules[i].enabled = !CustomRules[i].enabled;
+  // 有効になった場合はCfgに反映、無効なら元に戻す（デフォルト値は変えない）
+  RenderCustomRules();
+}
+
 /* ===== 設定値 ± ===== */
+/* ===== 試合終了音 ===== */
+let EndSoundCtx = null;
+let EndSoundNodes = [];
+let EndSoundLoopTimer = null;
+
+function StopEndSound() {
+  if (EndSoundLoopTimer) { clearInterval(EndSoundLoopTimer); EndSoundLoopTimer = null; }
+  EndSoundNodes.forEach(n => { try { n.stop(); } catch(e) {} });
+  EndSoundNodes = [];
+  if (EndSoundCtx) { EndSoundCtx.close(); EndSoundCtx = null; }
+}
+
+function StartEndSound() {
+  StopEndSound();
+  const type = El('EndSoundSelect')?.value || 'beep';
+  if (type === 'none') return;
+  // 1回鳴らしてから一定間隔でループ
+  PlaySoundOnce(type);
+  const interval = type === 'gong' ? 3500 : type === 'bell' ? 2500 : type === 'buzzer' ? 2000 : 1200;
+  EndSoundLoopTimer = setInterval(() => PlaySoundOnce(type), interval);
+}
+
+function PlaySoundOnce(type) {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    EndSoundCtx = ctx;
+
+    if (type === 'beep') {
+      [0, 0.25, 0.5].forEach(offset => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.frequency.value = 880;
+        osc.type = 'sine';
+        gain.gain.setValueAtTime(0.5, ctx.currentTime + offset);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + offset + 0.18);
+        osc.start(ctx.currentTime + offset);
+        osc.stop(ctx.currentTime + offset + 0.18);
+        EndSoundNodes.push(osc);
+      });
+
+    } else if (type === 'gong') {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.frequency.value = 120; osc.type = 'sine';
+      gain.gain.setValueAtTime(0.8, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 3.0);
+      osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 3.0);
+      EndSoundNodes.push(osc);
+      const osc2 = ctx.createOscillator();
+      const gain2 = ctx.createGain();
+      osc2.connect(gain2); gain2.connect(ctx.destination);
+      osc2.frequency.value = 240; osc2.type = 'sine';
+      gain2.gain.setValueAtTime(0.3, ctx.currentTime);
+      gain2.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 2.0);
+      osc2.start(ctx.currentTime); osc2.stop(ctx.currentTime + 2.0);
+      EndSoundNodes.push(osc2);
+
+    } else if (type === 'bell') {
+      [0, 0.4].forEach(offset => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.frequency.value = 1200; osc.type = 'sine';
+        gain.gain.setValueAtTime(0.6, ctx.currentTime + offset);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + offset + 1.2);
+        osc.start(ctx.currentTime + offset); osc.stop(ctx.currentTime + offset + 1.2);
+        EndSoundNodes.push(osc);
+      });
+
+    } else if (type === 'buzzer') {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.frequency.value = 440; osc.type = 'sawtooth';
+      gain.gain.setValueAtTime(0.4, ctx.currentTime);
+      gain.gain.setValueAtTime(0.4, ctx.currentTime + 0.7);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.9);
+      osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.9);
+      EndSoundNodes.push(osc);
+    }
+  } catch(e) {}
+}
+
 function Adj(key, delta) {
   const lim = { matchMin: [1, 20], wazaSec: [3, 30], yukoSec: [1, 20], yukoThrowSec: [1, 20] };
   const ids  = { matchMin: 'SetupMatchMin', wazaSec: 'SetupWazaSec', yukoSec: 'SetupYukoSec', yukoThrowSec: 'SetupYukoThrowSec' };
@@ -1399,12 +1572,13 @@ function GoMatch() {
   El('SetupScreen').style.display = 'none';
   El('MatchWrapper').style.display = 'block';
   CheckLayout();
+  if (IsMobile) LockLandscape();
   ['PcGsTag', 'SpGsTag'].forEach(id => { const e = El(id); if (e) e.style.display = 'none'; });
   ApplyScale();
   UpdateTimer();
   UpdateHajimeBtn();
   UpdateBtnPaused();
-  DoHajime();
+  // はじめを押すまでカウントしない
 }
 
 /* ===== タイマー ===== */
@@ -1412,8 +1586,14 @@ function UpdateTimer() {
   const t  = Fmt(Remain);
   const pc = El('PcTimerVal');
   const sp = El('SpTimerVal');
-  if (pc) { pc.textContent = t; pc.className = Running ? 'TimerVal IsRunning' : 'TimerVal'; }
-  if (sp) { sp.textContent = t; sp.className = Running ? 'SpTimer IsRunning'  : 'SpTimer';  }
+  if (IsGS) {
+    // GS中はタイマー表示を「GS中」のまま
+    if (pc) { pc.textContent = 'GS中'; pc.className = Running ? 'TimerVal IsRunning' : 'TimerVal'; }
+    if (sp) { sp.textContent = 'GS中'; sp.className = Running ? 'SpTimer IsRunning'  : 'SpTimer';  }
+  } else {
+    if (pc) { pc.textContent = t; pc.className = Running ? 'TimerVal IsRunning' : 'TimerVal'; }
+    if (sp) { sp.textContent = t; sp.className = Running ? 'SpTimer IsRunning'  : 'SpTimer';  }
+  }
 }
 
 function DoHajime() {
@@ -1439,9 +1619,47 @@ function OnTimeUp() {
   else StartGS();
 }
 
+function ToggleGS() {
+  if (MatchFinished) return;
+  if (IsGS) {
+    // GS解除
+    IsGS = false;
+    ['PcGsTag', 'SpGsTag'].forEach(id => { const e = El(id); if (e) e.style.display = 'none'; });
+    ['PcGsLive', 'SpGsLive'].forEach(id => { const e = El(id); if (e) e.style.display = 'none'; });
+    const btn = El('SpGsMenuBtn');
+    if (btn) btn.textContent = '⚡ GS開始';
+    // タイマー表示を通常に戻す
+    UpdateTimer();
+  } else {
+    // GS開始（手動）
+    DoMate(); // まず止める
+    IsGS = true;
+    ['PcGsTag', 'SpGsTag'].forEach(id => { const e = El(id); if (e) e.style.display = 'inline-block'; });
+    ['PcGsLive', 'SpGsLive'].forEach(id => { const e = El(id); if (e) e.style.display = 'inline-block'; });
+    // タイマー表示を「GS中」に
+    const pc = El('PcTimerVal');
+    const sp = El('SpTimerVal');
+    if (pc) { pc.textContent = 'GS中'; pc.className = 'TimerVal IsRunning'; }
+    if (sp) { sp.textContent = 'GS中'; sp.className = 'SpTimer IsRunning'; }
+    const btn = El('SpGsMenuBtn');
+    if (btn) btn.textContent = '⚡ GS終了';
+    AddLog('red',   '─ GS延長 ─', null, true);
+    AddLog('white', '─ GS延長 ─', null, true);
+    DoHajime();
+  }
+}
+
 function StartGS() {
   IsGS = true;
   ['PcGsTag', 'SpGsTag'].forEach(id => { const e = El(id); if (e) e.style.display = 'inline-block'; });
+  ['PcGsLive', 'SpGsLive'].forEach(id => { const e = El(id); if (e) e.style.display = 'inline-block'; });
+  // タイマー表示を「GS中」に
+  const pc = El('PcTimerVal');
+  const sp = El('SpTimerVal');
+  if (pc) { pc.textContent = 'GS中'; pc.className = 'TimerVal IsRunning'; }
+  if (sp) { sp.textContent = 'GS中'; sp.className = 'SpTimer IsRunning'; }
+  const btn = El('SpGsMenuBtn');
+  if (btn) btn.textContent = '⚡ GS終了';
   AddLog('red',   '─ GS延長 ─', null, true);
   AddLog('white', '─ GS延長 ─', null, true);
   DoHajime();
@@ -1455,12 +1673,39 @@ function DoMate() {
   UpdateBtnPaused();
 }
 
+function DoSoremadeStop() {
+  // それまで押下時：音を止めてから判定
+  StopEndSound();
+}
+
 function PauseTimer(side) {
   clearInterval(TimerState[side].int);
   TimerState[side].run = false;
 }
 
-function DoSoremade() { DoMate(); }
+function DoSoremade() {
+  // 試合終了済み（はじめが押せない状態）でもう一度押したらリセット
+  if (MatchFinished) {
+    DoResetMatch();
+    return;
+  }
+  StopEndSound();
+  DoMate();
+  const r = Sc.red, w = Sc.white;
+  // 技あり数で比較
+  if (r.W > w.W) { DeclareWin('red', '技あり優勢（それまで）'); return; }
+  if (w.W > r.W) { DeclareWin('white', '技あり優勢（それまで）'); return; }
+  // 指導数で比較（少ない方が優勢）
+  if (r.S < w.S) { DeclareWin('red', '指導数優勢（それまで）'); return; }
+  if (w.S < r.S) { DeclareWin('white', '指導数優勢（それまで）'); return; }
+  // 引き分け
+  ShowDraw();
+}
+
+function ShowDraw() {
+  MatchFinished = true;
+  StartEndSound();
+}
 
 function ClearAll() {
   Sc   = { red: { I:0,W:0,Y:0,S:0,O:0 }, white: { I:0,W:0,Y:0,S:0,O:0 } };
@@ -1485,14 +1730,17 @@ function DoResetMatch() {
   IsGS = false;
   Remain = Cfg.matchMin * 60;
   ClearAll();
-  ['PcGsTag','SpGsTag'].forEach(id => { const e = El(id); if (e) e.style.display = 'none'; });
+  ['PcGsTag','SpGsTag','PcGsLive','SpGsLive'].forEach(id => { const e = El(id); if (e) e.style.display = 'none'; });
+  const gsBtn = El('SpGsMenuBtn'); if (gsBtn) gsBtn.textContent = '⚡ GS開始';
   El('WinBanner').className = 'WinBanner';
+  StopEndSound();
   UpdateTimer();
   UpdateHajimeBtn();
   UpdateBtnPaused();
 }
 
 function DoBack() {
+  StopEndSound();
   DoMate();
   MatchFinished = false;
   IsGS = false;
@@ -1500,6 +1748,7 @@ function DoBack() {
   El('WinBanner').className = 'WinBanner';
   El('MatchWrapper').style.display = 'none';
   El('SetupScreen').style.display  = 'block';
+  UnlockOrientation();
 }
 
 /* ===== スコア表示 ===== */
@@ -1657,10 +1906,8 @@ function DeclareWin(side, method) {
   WinnerSide    = side;
   DoMate();
   UpdateLamps(side, true);
-  El('WinName').textContent   = (side === 'red' ? '赤' : '白') + 'の勝ち';
-  El('WinMethod').textContent = method;
-  El('WinBanner').className   = 'WinBanner IsOpen ' + (side === 'red' ? 'IsRedWin' : 'IsWhiteWin');
   UpdateHajimeBtn();
+  StartEndSound();
 }
 
 function CloseWin() {
