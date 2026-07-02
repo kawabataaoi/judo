@@ -17,11 +17,27 @@
   <link rel="apple-touch-icon" href="./icons/icon-192.png" />
   <meta name="theme-color" content="#501313" />
   <style>
+
+
 /* ===== リセット ===== */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+}
+
+/* ===== 縦向き時に強制横回転 ===== */
+@media screen and (orientation: portrait) {
+  html {
+    transform: rotate(90deg);
+    transform-origin: left top;
+    width: 100vh;
+    height: 100vw;
+    overflow-x: hidden;
+    position: absolute;
+    top: 100%;
+    left: 0;
+  }
 }
 
 /* ===== ベース ===== */
@@ -561,6 +577,31 @@ body {
 /* ===== スマホ版 ===== */
 .SpLayout { display: none; padding: 4px; }
 
+/* ===== 縦持ち時に試合画面を強制横向き（iOS対応） ===== */
+@media screen and (orientation: portrait) and (max-width: 1099px) {
+  #MatchWrapper {
+    transform-origin: top left;
+    transform: rotate(90deg) translateY(-100%);
+    width: 100vh;   /* 回転後の幅 = 画面の高さ */
+    height: 100vw;  /* 回転後の高さ = 画面の幅 */
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    overflow: hidden;
+  }
+}
+
+/* 横向きは通常表示 */
+@media screen and (orientation: landscape) {
+  #MatchWrapper {
+    transform: none;
+    width: auto;
+    height: auto;
+    position: static;
+  }
+}
+
 /*
   上部バー：
   - コンテナ全体 position:relative, 固定height
@@ -898,6 +939,33 @@ body {
   border-color: #185FA5;
 }
 
+
+/* ===== スマホ縦向き時に試合画面を強制横向き ===== */
+@media screen and (orientation: portrait) and (max-width: 1099px) {
+  #MatchWrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vh;   /* 高さ分を幅に */
+    height: 100vw;  /* 幅分を高さに */
+    transform: rotate(90deg);
+    transform-origin: top left;
+    margin-top: 100vw; /* 回転後の位置補正 */
+    overflow: hidden;
+    z-index: 100;
+  }
+}
+
+/* 横向きのときは通常表示 */
+@media screen and (orientation: landscape) {
+  #MatchWrapper {
+    position: static;
+    width: 100%;
+    height: auto;
+    transform: none;
+    margin-top: 0;
+  }
+}
 </style>
 </head>
 <body>
@@ -1418,8 +1486,61 @@ function CheckLayout() {
   El('PcLayout').style.display = IsMobile ? 'none' : 'block';
   El('SpLayout').style.display = IsMobile ? 'block' : 'none';
 }
-window.addEventListener('resize', CheckLayout);
-window.addEventListener('orientationchange', () => { setTimeout(CheckLayout, 100); });
+window.addEventListener('resize', () => { CheckLayout(); ApplyRotation(); });
+window.addEventListener('orientationchange', () => { setTimeout(() => { CheckLayout(); ApplyRotation(); }, 300); });
+
+function ApplyRotation() {
+  const wrap = El('MatchWrapper');
+  if (!wrap || wrap.style.display === 'none') return;
+
+  if (!IsMobile) {
+    // PCは回転なし
+    wrap.style.cssText = wrap.style.cssText
+      .replace(/position:[^;]+;/g, '')
+      .replace(/top:[^;]+;/g, '')
+      .replace(/left:[^;]+;/g, '')
+      .replace(/width:[^;]+;/g, '')
+      .replace(/height:[^;]+;/g, '')
+      .replace(/transform:[^;]+;/g, '')
+      .replace(/margin:[^;]+;/g, '');
+    wrap.style.position = '';
+    wrap.style.transform = '';
+    wrap.style.width = '';
+    wrap.style.height = '';
+    wrap.style.top = '';
+    wrap.style.left = '';
+    return;
+  }
+
+  const isPortrait = window.innerHeight > window.innerWidth;
+  if (isPortrait) {
+    const sw = window.innerWidth;
+    const sh = window.innerHeight;
+    wrap.style.position = 'fixed';
+    wrap.style.top = '0';
+    wrap.style.left = '0';
+    wrap.style.width = sh + 'px';
+    wrap.style.height = sw + 'px';
+    wrap.style.transform = `rotate(90deg) translateY(-${sw}px)`;
+    wrap.style.transformOrigin = 'top left';
+    wrap.style.margin = '0';
+    wrap.style.zIndex = '100';
+    wrap.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+  } else {
+    wrap.style.position = '';
+    wrap.style.top = '';
+    wrap.style.left = '';
+    wrap.style.width = '';
+    wrap.style.height = '';
+    wrap.style.transform = '';
+    wrap.style.transformOrigin = '';
+    wrap.style.margin = '';
+    wrap.style.zIndex = '';
+    wrap.style.overflow = '';
+    document.body.style.overflow = '';
+  }
+}
 
 function LockLandscape() {
   // スマホ版で横向きに固定
@@ -1810,6 +1931,7 @@ function GoMatch() {
   El('MatchWrapper').style.display = 'block';
   CheckLayout();
   if (IsMobile) LockLandscape();
+  ApplyRotation();
   ['PcGsTag', 'SpGsTag'].forEach(id => { const e = El(id); if (e) e.style.display = 'none'; });
   ApplyScale();
   UpdateTimer();
@@ -2078,6 +2200,17 @@ function ExecuteBack() {
   El('WinBanner').className = 'WinBanner';
   El('MatchWrapper').style.display = 'none';
   El('SetupScreen').style.display  = 'block';
+  // 回転リセット
+  const wrap = El('MatchWrapper');
+  if (wrap) {
+    wrap.style.position = '';
+    wrap.style.transform = '';
+    wrap.style.width = '';
+    wrap.style.height = '';
+    wrap.style.top = '';
+    wrap.style.left = '';
+  }
+  document.body.style.overflow = '';
   UnlockOrientation();
 }
 
