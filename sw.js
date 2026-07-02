@@ -1,5 +1,5 @@
 // Service Worker - 柔道スコアボード
-const CACHE_NAME = 'judo-scoreboard-v3';
+const CACHE_NAME = 'judo-scoreboard-v4';
 const ASSETS = [
   './judo_scoreboard.html',
   './manifest.json',
