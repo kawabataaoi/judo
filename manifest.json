@@ -4,7 +4,7 @@
   "description": "柔道試合の審判用スコアボードアプリ",
   "start_url": "./judo_scoreboard.html",
   "display": "standalone",
-  "orientation": "any",
+  "orientation": "landscape",
   "background_color": "#501313",
   "theme_color": "#501313",
   "lang": "ja",
