@@ -550,6 +550,9 @@ body {
 }
 .CtrlBtn--Hajime  { background: #185FA5; color: #E6F1FB; font-size: 12px; }
 .CtrlBtn--Hajime.IsDisabled { opacity: 0.35; cursor: not-allowed; }
+.CtrlBtn--Mate.IsDisabled   { opacity: 0.35; cursor: not-allowed; }
+.SpOpBtn--Hajime.IsDisabled { opacity: 0.35; cursor: not-allowed; }
+.SpOpBtn--Mate.IsDisabled   { opacity: 0.35; cursor: not-allowed; }
 .CtrlBtn--Mate    { background: #BA7517; color: #FAEEDA; font-size: 12px; }
 .CtrlBtn--Sore    { background: #A32D2D; color: #FCEBEB; font-size: 9px;  }
 .CtrlBtn--Back    { background: #f0f0f0; color: #444; border: 1px solid #d0d0d0; font-size: 9px; }
@@ -651,34 +654,41 @@ body {
 }
 .SpGearMenu {
   display: none;
-  position: absolute;
-  top: calc(100% + 4px);
-  right: 0;
-  background: #fff;
-  border: 1.5px solid #ccc;
+  position: fixed;
+  top: 56px;
+  right: 8px;
+  background: #ffffff !important;
+  border: 2px solid #888;
   border-radius: 10px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
-  min-width: 140px;
-  z-index: 500;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+  min-width: 180px;
+  z-index: 9999;
   overflow: hidden;
-  opacity: 1;
+  opacity: 1 !important;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  will-change: transform;
+  isolation: isolate;
 }
+
 .SpGearMenu.IsOpen { display: block; }
 .SpGearMenuItem {
   display: block;
   width: 100%;
-  padding: 11px 14px;
+  padding: 13px 16px;
   border: none;
-  background: #fff;
-  color: #333;
-  font-size: 13px;
-  font-weight: 500;
+  background: #ffffff !important;
+  opacity: 1 !important;
+  color: #1a1a1a;
+  font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
   text-align: left;
-  border-bottom: 0.5px solid #f0f0f0;
+  border-bottom: 1px solid #e0e0e0;
 }
 .SpGearMenuItem:last-child { border-bottom: none; }
-.SpGearMenuItem:hover { background: #f5f5f5; }
+.SpGearMenuItem:hover { background: #f0f0f0 !important; }
+.SpGearMenuItem:active { background: #e0e0e0 !important; }
 .SpGearMenuItem--Danger { color: #A32D2D; }
 .SpGearMenuItem--GS     { color: #185FA5; font-weight: 700; }
 
@@ -744,8 +754,9 @@ body {
   grid-template-columns: 1fr auto 1fr;
   gap: 4px;
   align-items: start;
+  margin-bottom: 2px;
 }
-.SpScorePanel { display: flex; flex-direction: column; gap: 3px; }
+.SpScorePanel { display: flex; flex-direction: column; gap: 4px; flex: 1; }
 .SpPanelHdr {
   text-align: center;
   font-size: 12px;
@@ -757,15 +768,17 @@ body {
 .SpPanelHdr--White { background: #888780; color: #fff; }
 
 .SpScoreGrid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 2px; }
+.SpScoreGrid--Nums { display: grid; grid-template-columns: repeat(5, 1fr); gap: 2px; flex: 1; }
+.SpScoreGrid--Nums .SpScoreBox { display: flex; align-items: center; justify-content: center; }
 .SpScoreHdr  { text-align: center; font-size: 8px; color: #888; font-weight: 600; }
 .SpScoreBox  {
   background: #fff;
   border: 1px solid #e0e0e0;
   border-radius: 4px;
   text-align: center;
-  padding: 2px 1px;
+  padding: 10px 1px;
 }
-.SpScoreNum { font-size: 16px; font-weight: 700; color: #1a1a1a; line-height: 1; }
+.SpScoreNum { font-size: 22px; font-weight: 700; color: #1a1a1a; line-height: 1; }
 .SpScoreNum--Ippon { color: #A32D2D; }
 .SpScoreNum--Osae  { color: #BA7517; }
 
@@ -821,22 +834,22 @@ body {
   border: 1px solid #e0e0e0;
   border-radius: 6px;
   padding: 4px 6px;
-  height: 120px;
+  height: 140px;
   overflow-y: auto;
 }
-.SpLogLbl { font-size: 9px; color: #888; margin-bottom: 2px; font-weight: 600; }
+.SpLogLbl { font-size: 11px; color: #888; margin-bottom: 3px; font-weight: 600; }
 .SpLogEntry {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 10px;
-  padding: 2px 0;
+  font-size: 12px;
+  padding: 3px 0;
   border-bottom: 0.5px solid #f0f0f0;
 }
 .SpLogEntry:last-child { border-bottom: none; }
 .SpLogText { flex: 1; }
 .SpLogEntry--Red   .SpLogText { color: #A32D2D; }
-.SpLogEntry--White .SpLogText { color: #5F5E5A; }
+.SpLogEntry--White .SpLogText { color: #1a1a1a; }
 .SpLogEntry--Gray  .SpLogText { color: #AAAAAA; }
 .SpLogDelBtn {
   background: none;
@@ -954,8 +967,8 @@ body {
       <input class="AddRuleInput" id="AddRuleNote" placeholder="例：少年の部" />
     </div>
     <div class="AddRuleBtnRow">
+      <button class="AddRuleOkBtn"     onclick="ConfirmAddRule()">追加</button>
       <button class="AddRuleCancelBtn" onclick="CloseAddRule()">キャンセル</button>
-      <button class="AddRuleOkBtn" onclick="ConfirmAddRule()">追加</button>
     </div>
   </div>
 </div>
@@ -967,6 +980,55 @@ body {
     <div class="WinName"   id="WinName"></div>
     <div class="WinMethod" id="WinMethod"></div>
     <button class="WinCloseBtn" onclick="CloseWin()">閉じる</button>
+  </div>
+</div>
+
+<!-- ===== 試合記録モーダル ===== -->
+<div class="ModalOverlay" id="RecordModal">
+  <div class="ModalBox" style="max-width:520px;">
+    <div class="ModalTitle">
+      試合結果を記録しますか？
+      <button class="ModalCloseBtn" onclick="CloseRecordModal(false)">✕</button>
+    </div>
+    <div style="font-size:12px;color:#888;margin-bottom:12px;text-align:center;" id="RecordMatchNum">第1試合</div>
+
+    <!-- 赤・白 横並び -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+      <!-- 赤 -->
+      <div style="background:#fff0f0;border:1px solid #E24B4A;border-radius:8px;padding:10px;">
+        <div style="font-size:12px;font-weight:700;color:#A32D2D;margin-bottom:8px;">🔴 赤</div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <input class="AddRuleInput" id="RecordRedSchool" placeholder="所属（学校・道場など）" />
+          <input class="AddRuleInput" id="RecordRedName"   placeholder="氏名" />
+        </div>
+      </div>
+      <!-- 白 -->
+      <div style="background:#fffef0;border:1px solid #c9a000;border-radius:8px;padding:10px;">
+        <div style="font-size:12px;font-weight:700;color:#8a6e00;margin-bottom:8px;">🟡 白</div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <input class="AddRuleInput" id="RecordWhiteSchool" placeholder="所属（学校・道場など）" />
+          <input class="AddRuleInput" id="RecordWhiteName"   placeholder="氏名" />
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:8px;">
+      <button class="AddRuleOkBtn"     onclick="CloseRecordModal(true)"  style="flex:1;">はい・記録する</button>
+      <button class="AddRuleCancelBtn" onclick="CloseRecordModal(false)" style="flex:1;">いいえ</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PDF未出力警告モーダル ===== -->
+<div class="ModalOverlay" id="BackWarnModal">
+  <div class="ModalBox" style="max-width:360px;text-align:center;">
+    <div style="font-size:32px;margin-bottom:12px;">⚠️</div>
+    <div style="font-size:15px;font-weight:700;color:#1a1a1a;margin-bottom:8px;">記録が出力されていません</div>
+    <div style="font-size:13px;color:#666;margin-bottom:20px;">試合結果PDFの出力を行っていないですが、設定画面に戻りますか？<br>記録は失われます。</div>
+    <div style="display:flex;gap:8px;">
+      <button class="AddRuleOkBtn"     onclick="ExportPDF();CloseBackWarnModal();" style="flex:1;">PDFを出力する</button>
+      <button class="AddRuleOkBtn"     onclick="ConfirmBack()" style="flex:1;background:#A32D2D;">出力せず戻る</button>
+    </div>
   </div>
 </div>
 
@@ -992,6 +1054,11 @@ body {
         <span class="SetupVal" id="SetupMatchMin">4</span>
         <span class="SetupUnit">分</span>
         <button class="SetupAdjBtn" onclick="Adj('matchMin', 1)">+</button>
+        <span style="margin-left:8px;"></span>
+        <button class="SetupAdjBtn" onclick="Adj('matchSec', -10)">−</button>
+        <span class="SetupVal" id="SetupMatchSec">0</span>
+        <span class="SetupUnit">秒</span>
+        <button class="SetupAdjBtn" onclick="Adj('matchSec', 10)">+</button>
       </div>
     </div>
 
@@ -1018,6 +1085,15 @@ body {
     </div>
 
 
+    <!-- 記録機能 -->
+    <div class="SetupRow">
+      <label>試合記録機能</label>
+      <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+        <input type="checkbox" id="RecordEnabled" checked style="width:18px;height:18px;accent-color:#185FA5;cursor:pointer;" />
+        <span style="font-size:13px;color:#185FA5;font-weight:600;">ON</span>
+      </label>
+    </div>
+
     <!-- 試合終了音 -->
     <div class="SetupRow">
       <label>試合終了音</label>
@@ -1039,7 +1115,7 @@ body {
 
     <div class="SetupBtnRow">
       <button class="SetupRuleBtn" onclick="OpenRule()">📋 公式ルール</button>
-      <button class="SetupStartBtn" onclick="GoMatch()">GS 試合開始</button>
+      <button class="SetupStartBtn" onclick="GoMatch()">試合開始</button>
     </div>
   </div>
 </div>
@@ -1053,7 +1129,7 @@ body {
     <!-- タイマーバー -->
     <div class="PcTimerBar">
       <span class="TimerVal" id="PcTimerVal">4:00</span>
-      <span class="GsTag"    id="PcGsTag">GS</span>
+      <span class="GsTag"    id="PcGsTag">延長</span>
       <span class="GsLive"   id="PcGsLive" style="display:none">中</span>
       <button class="PcRuleBtn" onclick="OpenRule()">📋 ルール</button>
     </div>
@@ -1139,8 +1215,8 @@ body {
       <div class="PcCtrlCol">
         <div class="PcCtrlTop">
           <button class="CtrlBtn CtrlBtn--Hajime" id="PcHajimeBtn" onclick="DoHajime()">はじめ</button>
-          <button class="CtrlBtn CtrlBtn--Mate"   onclick="DoMate()">まて</button>
-          <button class="CtrlBtn CtrlBtn--Sore"   onclick="DoSoremade()">それまで</button>
+          <button class="CtrlBtn CtrlBtn--Mate" id="PcMateBtn" onclick="DoMate()">まて</button>
+          <button class="CtrlBtn CtrlBtn--Sore" id="PcSoremadeBtn" onclick="DoSoremade()">それまで</button>
           <button class="CtrlBtn CtrlBtn--Back"   onclick="DoBack()">設定に戻る</button>
         </div>
         <div class="PcCtrlBottom">
@@ -1160,7 +1236,7 @@ body {
       <!-- タイマー（中央） -->
       <div class="SpTimerBlock">
         <span class="SpTimer" id="SpTimerVal">4:00</span>
-        <span class="SpGsTag" id="SpGsTag">GS</span>
+        <span class="SpGsTag" id="SpGsTag">延長</span>
         <span class="SpGsLive" id="SpGsLive" style="display:none">中</span>
       </div>
       <!-- 赤ランプ（左1/4） -->
@@ -1170,12 +1246,6 @@ body {
       <!-- 歯車（右端） -->
       <div class="SpGearWrap">
         <button class="SpGearBtn" id="SpGearBtn" onclick="ToggleGearMenu()">⚙️</button>
-        <div class="SpGearMenu" id="SpGearMenu">
-          <button class="SpGearMenuItem"           onclick="OpenRule();CloseGearMenu()">📋 ルールブック</button>
-          <button class="SpGearMenuItem SpGearMenuItem--GS" id="SpGsMenuBtn" onclick="ToggleGS();CloseGearMenu()">⚡ GS開始</button>
-          <button class="SpGearMenuItem"           onclick="DoBack();CloseGearMenu()">⚙️ 設定に戻る</button>
-          <button class="SpGearMenuItem SpGearMenuItem--Danger" onclick="DoResetMatch();CloseGearMenu()">🔄 リセット</button>
-        </div>
       </div>
     </div>
 
@@ -1206,7 +1276,7 @@ body {
               <div class="SpScoreHdr">指導</div>
               <div class="SpScoreHdr">抑込</div>
             </div>
-            <div class="SpScoreGrid">
+            <div class="SpScoreGrid SpScoreGrid--Nums">
               <div class="SpScoreBox"><div class="SpScoreNum SpScoreNum--Ippon" id="SpRedI">0</div></div>
               <div class="SpScoreBox"><div class="SpScoreNum"                   id="SpRedW">0</div></div>
               <div class="SpScoreBox"><div class="SpScoreNum"                   id="SpRedY">0</div></div>
@@ -1217,8 +1287,8 @@ body {
           <!-- 操作ボタン -->
           <div class="SpOps">
             <button class="SpOpBtn SpOpBtn--Hajime" id="SpHajimeBtn" onclick="DoHajime()">はじめ</button>
-            <button class="SpOpBtn SpOpBtn--Mate"   onclick="DoMate()">まて</button>
-            <button class="SpOpBtn SpOpBtn--Sore"   onclick="DoSoremade()">それまで</button>
+            <button class="SpOpBtn SpOpBtn--Mate" id="SpMateBtn" onclick="DoMate()">まて</button>
+            <button class="SpOpBtn SpOpBtn--Sore" id="SpSoremadeBtn" onclick="DoSoremade()">それまで</button>
           </div>
           <!-- 白スコア -->
           <div class="SpScorePanel">
@@ -1230,7 +1300,7 @@ body {
               <div class="SpScoreHdr">指導</div>
               <div class="SpScoreHdr">抑込</div>
             </div>
-            <div class="SpScoreGrid">
+            <div class="SpScoreGrid SpScoreGrid--Nums">
               <div class="SpScoreBox"><div class="SpScoreNum SpScoreNum--Ippon" id="SpWhiteI">0</div></div>
               <div class="SpScoreBox"><div class="SpScoreNum"                   id="SpWhiteW">0</div></div>
               <div class="SpScoreBox"><div class="SpScoreNum"                   id="SpWhiteY">0</div></div>
@@ -1297,7 +1367,7 @@ body {
 'use strict';
 
 /* ===== 設定 ===== */
-let Cfg = { matchMin: 4, wazaSec: 10, yukoSec: 5, yukoThrowSec: 5 };
+let Cfg = { matchMin: 4, matchSec: 0, wazaSec: 10, yukoSec: 5, yukoThrowSec: 5 };
 let CustomRules = [];
 
 /* ===== 試合状態 ===== */
@@ -1384,6 +1454,18 @@ function ApplyScale() {
 /* ===== 歯車メニュー ===== */
 function ToggleGearMenu() {
   El('SpGearMenu').classList.toggle('IsOpen');
+  // 試合中はルールブック・PDF・設定に戻るを押せない
+  ['GearMenuRule','GearMenuPDF','GearMenuBack'].forEach(id => {
+    const b = El(id);
+    if (!b) return;
+    if (Running) {
+      b.style.pointerEvents = 'none';
+      b.style.opacity = '0.35';
+    } else {
+      b.style.pointerEvents = '';
+      b.style.opacity = '';
+    }
+  });
 }
 function CloseGearMenu() {
   El('SpGearMenu')?.classList.remove('IsOpen');
@@ -1471,6 +1553,161 @@ function ToggleCustomRule(i) {
 }
 
 /* ===== 設定値 ± ===== */
+/* ===== 試合記録機能 ===== */
+let MatchRecords = [];  // 試合結果の蓄積
+let PdfExported = false; // PDF出力済みフラグ
+
+function GetWinnerText() {
+  if (!WinnerSide) return '引き分け';
+  return WinnerSide === 'red' ? '赤の勝ち' : '白の勝ち';
+}
+
+function GetMethodText() {
+  // Scから勝利方法を推測
+  const r = Sc.red, w = Sc.white;
+  if (r.I >= 1) return '一本（赤）';
+  if (w.I >= 1) return '一本（白）';
+  if (r.W >= 2) return '合わせ技一本（赤）';
+  if (w.W >= 2) return '合わせ技一本（白）';
+  if (r.S >= 3) return '反則負け（赤）';
+  if (w.S >= 3) return '反則負け（白）';
+  if (WinnerSide === 'red')   return '優勢（赤）';
+  if (WinnerSide === 'white') return '優勢（白）';
+  return '引き分け';
+}
+
+function OpenRecordModal() {
+  // 記録機能がOFFなら何もしない
+  const enabled = El('RecordEnabled')?.checked;
+  if (!enabled) return;
+  const num = MatchRecords.length + 1;
+  El('RecordMatchNum').textContent = `第${num}試合`;
+  // 前回の入力をクリア
+  ['RecordRedSchool','RecordRedName','RecordWhiteSchool','RecordWhiteName'].forEach(id => {
+    const e = El(id); if (e) e.value = '';
+  });
+  El('RecordModal').classList.add('IsOpen');
+}
+
+function CloseRecordModal(save) {
+  El('RecordModal').classList.remove('IsOpen');
+  if (save) {
+    const record = {
+      matchNum:     MatchRecords.length + 1,
+      redSchool:    El('RecordRedSchool')?.value.trim()   || '―',
+      redName:      El('RecordRedName')?.value.trim()     || '―',
+      whiteSchool:  El('RecordWhiteSchool')?.value.trim() || '―',
+      whiteName:    El('RecordWhiteName')?.value.trim()   || '―',
+      winner:       GetWinnerText(),
+      method:       GetMethodText(),
+      redScore:     { ...Sc.red },
+      whiteScore:   { ...Sc.white },
+      redLogs:      [...Logs.red],
+      whiteLogs:    [...Logs.white],
+      date:         new Date().toLocaleString('ja-JP')
+    };
+    MatchRecords.push(record);
+    console.log('記録保存:', record);
+  }
+  // はい・いいえ どちらでもリセット実行
+  DoResetMatch();
+}
+
+function ExportPDF() {
+  if (MatchRecords.length === 0) {
+    alert('記録された試合がありません。');
+    return;
+  }
+
+  // 印刷用HTMLを生成
+  const rows = MatchRecords.map(r => {
+    // 赤の記録ログ（grayでないもの）
+    const redLogHTML = r.redLogs
+      .filter(l => !l.gray)
+      .map(l => `<div style="font-size:10px;color:#A32D2D;padding:1px 0;border-bottom:0.5px solid #f0e0e0;">${l.text}</div>`)
+      .join('') || '<div style="font-size:10px;color:#ccc;">記録なし</div>';
+    const whiteLogHTML = r.whiteLogs
+      .filter(l => !l.gray)
+      .map(l => `<div style="font-size:10px;color:#5F5E5A;padding:1px 0;border-bottom:0.5px solid #f0f0e0;">${l.text}</div>`)
+      .join('') || '<div style="font-size:10px;color:#ccc;">記録なし</div>';
+
+    return `
+    <tr>
+      <td style="text-align:center;font-weight:700;vertical-align:top;padding-top:10px;">${r.matchNum}</td>
+      <td style="vertical-align:top;">
+        <div style="font-size:10px;color:#888;">${r.redSchool}</div>
+        <div style="font-weight:600;margin-bottom:6px;">${r.redName}</div>
+        <div style="background:#fff5f5;border-radius:4px;padding:4px 6px;">${redLogHTML}</div>
+      </td>
+      <td style="text-align:center;vertical-align:top;padding-top:10px;">
+        <div style="font-size:20px;font-weight:700;color:#A32D2D;">${r.redScore.I}<span style="font-size:10px;color:#888;">本</span></div>
+        <div style="font-size:16px;font-weight:600;color:#185FA5;">${r.redScore.W}<span style="font-size:10px;color:#888;">技</span></div>
+        <div style="font-size:13px;color:#633806;">${r.redScore.S}<span style="font-size:10px;color:#888;">指</span></div>
+      </td>
+      <td style="text-align:center;vertical-align:top;padding-top:10px;">
+        <div style="font-weight:700;font-size:13px;color:${r.winner==='引き分け'?'#444':r.winner.includes('赤')?'#A32D2D':'#8a6e00'};">${r.winner}</div>
+        <div style="font-size:10px;color:#aaa;margin-top:4px;">${r.method}</div>
+      </td>
+      <td style="text-align:center;vertical-align:top;padding-top:10px;">
+        <div style="font-size:20px;font-weight:700;color:#A32D2D;">${r.whiteScore.I}<span style="font-size:10px;color:#888;">本</span></div>
+        <div style="font-size:16px;font-weight:600;color:#185FA5;">${r.whiteScore.W}<span style="font-size:10px;color:#888;">技</span></div>
+        <div style="font-size:13px;color:#633806;">${r.whiteScore.S}<span style="font-size:10px;color:#888;">指</span></div>
+      </td>
+      <td style="vertical-align:top;">
+        <div style="font-size:10px;color:#888;">${r.whiteSchool}</div>
+        <div style="font-weight:600;margin-bottom:6px;">${r.whiteName}</div>
+        <div style="background:#fffef5;border-radius:4px;padding:4px 6px;">${whiteLogHTML}</div>
+      </td>
+    </tr>`;
+  }).join('');
+
+  const today = new Date().toLocaleDateString('ja-JP', { year:'numeric', month:'long', day:'numeric' });
+
+  const printHTML = `<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8"/>
+<title>試合結果 ${today}</title>
+<style>
+  body { font-family: 'Hiragino Sans','Noto Sans JP',sans-serif; margin:20px; color:#1a1a1a; }
+  h1 { font-size:18px; text-align:center; margin-bottom:4px; }
+  .date { text-align:center; font-size:12px; color:#888; margin-bottom:16px; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th { background:#501313; color:#fff; padding:8px 6px; font-size:11px; text-align:center; }
+  td { padding:8px 6px; border-bottom:1px solid #eee; vertical-align:middle; }
+  tr:nth-child(even) td { background:#fafafa; }
+  .winner-red   { color:#A32D2D; }
+  .winner-white { color:#8a6e00; }
+  @media print { body { margin:10px; } }
+</style>
+</head>
+<body>
+<h1>柔道試合結果</h1>
+<div class="date">${today}</div>
+<table>
+  <thead>
+    <tr>
+      <th style="width:36px;">試合</th>
+      <th>赤（所属・氏名・記録）</th>
+      <th style="width:60px;">赤</th>
+      <th style="width:80px;">結果</th>
+      <th style="width:60px;">白</th>
+      <th>白（所属・氏名・記録）</th>
+    </tr>
+  </thead>
+  <tbody>${rows}</tbody>
+</table>
+<div style="margin-top:20px;font-size:10px;color:#aaa;text-align:right;">柔道スコアボードアプリ出力</div>
+</body>
+</html>`;
+
+  PdfExported = true;
+  const win = window.open('', '_blank');
+  win.document.write(printHTML);
+  win.document.close();
+  win.onload = () => win.print();
+}
+
 /* ===== 試合終了音 ===== */
 let EndSoundCtx = null;
 let EndSoundNodes = [];
@@ -1557,15 +1794,15 @@ function PlaySoundOnce(type) {
 }
 
 function Adj(key, delta) {
-  const lim = { matchMin: [1, 20], wazaSec: [3, 30], yukoSec: [1, 20], yukoThrowSec: [1, 20] };
-  const ids  = { matchMin: 'SetupMatchMin', wazaSec: 'SetupWazaSec', yukoSec: 'SetupYukoSec', yukoThrowSec: 'SetupYukoThrowSec' };
+  const lim = { matchMin: [0, 20], matchSec: [0, 50], wazaSec: [3, 30], yukoSec: [1, 20], yukoThrowSec: [1, 20] };
+  const ids  = { matchMin: 'SetupMatchMin', matchSec: 'SetupMatchSec', wazaSec: 'SetupWazaSec', yukoSec: 'SetupYukoSec', yukoThrowSec: 'SetupYukoThrowSec' };
   Cfg[key] = Math.min(lim[key][1], Math.max(lim[key][0], Cfg[key] + delta));
   El(ids[key]).textContent = Cfg[key];
 }
 
 /* ===== 試合開始 ===== */
 function GoMatch() {
-  Remain = Cfg.matchMin * 60;
+  Remain = Cfg.matchMin * 60 + Cfg.matchSec;
   IsGS = false;
   MatchFinished = false;
   WinnerSide = null;
@@ -1588,8 +1825,8 @@ function UpdateTimer() {
   const sp = El('SpTimerVal');
   if (IsGS) {
     // GS中はタイマー表示を「GS中」のまま
-    if (pc) { pc.textContent = 'GS中'; pc.className = Running ? 'TimerVal IsRunning' : 'TimerVal'; }
-    if (sp) { sp.textContent = 'GS中'; sp.className = Running ? 'SpTimer IsRunning'  : 'SpTimer';  }
+    if (pc) { pc.textContent = '延長中'; pc.className = Running ? 'TimerVal IsRunning' : 'TimerVal'; }
+    if (sp) { sp.textContent = '延長中'; sp.className = Running ? 'SpTimer IsRunning'  : 'SpTimer';  }
   } else {
     if (pc) { pc.textContent = t; pc.className = Running ? 'TimerVal IsRunning' : 'TimerVal'; }
     if (sp) { sp.textContent = t; sp.className = Running ? 'SpTimer IsRunning'  : 'SpTimer';  }
@@ -1611,6 +1848,20 @@ function DoHajime() {
 }
 
 function OnTimeUp() {
+  // 抑え込み中なら抑え込みを優先してGS継続
+  const redOsae   = TimerState.red.run   && TimerState.red.type   === 'osae';
+  const whiteOsae = TimerState.white.run && TimerState.white.type === 'osae';
+  if (redOsae || whiteOsae) {
+    // タイマーはすでに止まっているが抑え込みカウントは継続→GSへ
+    IsGS = true;
+    ['PcGsTag','SpGsTag'].forEach(id => { const e = El(id); if (e) e.style.display = 'inline-block'; });
+    ['PcGsLive','SpGsLive'].forEach(id => { const e = El(id); if (e) e.style.display = 'inline-block'; });
+    const pc = El('PcTimerVal'); const sp = El('SpTimerVal');
+    if (pc) { pc.textContent = '延長中'; pc.className = 'TimerVal IsRunning'; }
+    if (sp) { sp.textContent = '延長中'; sp.className = 'SpTimer IsRunning';  }
+    // はじめは押さずに抑え込みカウントだけ継続（インターバルはStartCountTimerで動いている）
+    return;
+  }
   const r = Sc.red, w = Sc.white;
   if      (r.W > w.W) DeclareWin('red',   '技あり優勢');
   else if (w.W > r.W) DeclareWin('white', '技あり優勢');
@@ -1639,12 +1890,12 @@ function ToggleGS() {
     // タイマー表示を「GS中」に
     const pc = El('PcTimerVal');
     const sp = El('SpTimerVal');
-    if (pc) { pc.textContent = 'GS中'; pc.className = 'TimerVal IsRunning'; }
-    if (sp) { sp.textContent = 'GS中'; sp.className = 'SpTimer IsRunning'; }
+    if (pc) { pc.textContent = '延長中'; pc.className = 'TimerVal IsRunning'; }
+    if (sp) { sp.textContent = '延長中'; sp.className = 'SpTimer IsRunning'; }
     const btn = El('SpGsMenuBtn');
     if (btn) btn.textContent = '⚡ GS終了';
-    AddLog('red',   '─ GS延長 ─', null, true);
-    AddLog('white', '─ GS延長 ─', null, true);
+    AddLog('red',   '─ 延長戦 ─', null, true);
+    AddLog('white', '─ 延長戦 ─', null, true);
     DoHajime();
   }
 }
@@ -1656,13 +1907,20 @@ function StartGS() {
   // タイマー表示を「GS中」に
   const pc = El('PcTimerVal');
   const sp = El('SpTimerVal');
-  if (pc) { pc.textContent = 'GS中'; pc.className = 'TimerVal IsRunning'; }
-  if (sp) { sp.textContent = 'GS中'; sp.className = 'SpTimer IsRunning'; }
+  if (pc) { pc.textContent = '延長中'; pc.className = 'TimerVal IsRunning'; }
+  if (sp) { sp.textContent = '延長中'; sp.className = 'SpTimer IsRunning'; }
   const btn = El('SpGsMenuBtn');
   if (btn) btn.textContent = '⚡ GS終了';
-  AddLog('red',   '─ GS延長 ─', null, true);
-  AddLog('white', '─ GS延長 ─', null, true);
+  AddLog('red',   '─ 延長戦 ─', null, true);
+  AddLog('white', '─ 延長戦 ─', null, true);
   DoHajime();
+}
+
+function ShowExtensionEnd() {
+  // 延長終了：タイマー表示を「延長終了」に変更
+  const pc = El('PcTimerVal'); const sp = El('SpTimerVal');
+  if (pc) { pc.textContent = '延長終了'; pc.className = 'TimerVal'; }
+  if (sp) { sp.textContent = '延長終了'; sp.className = 'SpTimer'; }
 }
 
 function DoMate() {
@@ -1684,13 +1942,24 @@ function PauseTimer(side) {
 }
 
 function DoSoremade() {
-  // 試合終了済み（はじめが押せない状態）でもう一度押したらリセット
-  if (MatchFinished) {
-    DoResetMatch();
-    return;
-  }
-  StopEndSound();
+  // MatchFinished時はそれぞれのボタンのonclickで処理するので何もしない
+  if (MatchFinished) return;
+  if (IsGS) ShowExtensionEnd();
   DoMate();
+  // まて・はじめをグレーアウト、それまでだけ押せるまま
+  ['PcHajimeBtn','SpHajimeBtn','PcMateBtn','SpMateBtn'].forEach(id => {
+    const b = El(id); if (b) b.classList.add('IsDisabled');
+  });
+  // それまでボタンを「音停止」に変更
+  ['PcSoremadeBtn','SpSoremadeBtn'].forEach(id => {
+    const b = El(id);
+    if (b) {
+      b.classList.remove('IsDisabled');
+      b.textContent = '音停止';
+      b.dataset.resetMode = 'stop';
+      b.onclick = () => { DoStopSound(); };
+    }
+  });
   const r = Sc.red, w = Sc.white;
   // 技あり数で比較
   if (r.W > w.W) { DeclareWin('red', '技あり優勢（それまで）'); return; }
@@ -1704,6 +1973,7 @@ function DoSoremade() {
 
 function ShowDraw() {
   MatchFinished = true;
+  if (IsGS) ShowExtensionEnd();
   StartEndSound();
 }
 
@@ -1724,27 +1994,87 @@ function ClearAll() {
   });
 }
 
+function DoStopSound() {
+  StopEndSound();
+  // 「音停止」→「リセット」に変更
+  ['PcSoremadeBtn','SpSoremadeBtn'].forEach(id => {
+    const b = El(id);
+    if (b) {
+      b.textContent = 'リセット';
+      b.dataset.resetMode = '1';
+      b.classList.remove('IsDisabled');
+      b.onclick = () => { OpenRecordModal(); };
+    }
+  });
+}
+
+function SetSoremadeAsReset() {
+  ['PcSoremadeBtn','SpSoremadeBtn'].forEach(id => {
+    const btn = El(id);
+    if (btn) {
+      btn.textContent = 'リセット';
+      btn.dataset.resetMode = '1';
+      btn.classList.remove('IsDisabled'); // リセットは押せる
+      btn.onclick = () => { OpenRecordModal(); };
+    }
+  });
+}
+
+function RestoreSoremadeBtn() {
+  ['PcSoremadeBtn','SpSoremadeBtn'].forEach(id => {
+    const btn = El(id);
+    if (btn) {
+      btn.textContent = 'それまで';
+      btn.dataset.resetMode = '';
+      btn.classList.add('IsDisabled');
+      btn.onclick = () => { DoSoremade(); };
+    }
+  });
+}
+
 function DoResetMatch() {
   DoMate();
   MatchFinished = false;
   IsGS = false;
-  Remain = Cfg.matchMin * 60;
+  Remain = Cfg.matchMin * 60 + Cfg.matchSec;
   ClearAll();
   ['PcGsTag','SpGsTag','PcGsLive','SpGsLive'].forEach(id => { const e = El(id); if (e) e.style.display = 'none'; });
   const gsBtn = El('SpGsMenuBtn'); if (gsBtn) gsBtn.textContent = '⚡ GS開始';
   El('WinBanner').className = 'WinBanner';
   StopEndSound();
+  RestoreSoremadeBtn();
   UpdateTimer();
   UpdateHajimeBtn();
   UpdateBtnPaused();
 }
 
 function DoBack() {
+  const recordEnabled = El('RecordEnabled')?.checked;
+  if (recordEnabled && MatchRecords.length > 0 && !PdfExported) {
+    El('BackWarnModal').classList.add('IsOpen');
+    return;
+  }
+  ExecuteBack();
+}
+
+function CloseBackWarnModal() {
+  El('BackWarnModal').classList.remove('IsOpen');
+}
+
+function ConfirmBack() {
+  El('BackWarnModal').classList.remove('IsOpen');
+  ExecuteBack();
+}
+
+function ExecuteBack() {
+  PdfExported = false;
   StopEndSound();
+  RestoreSoremadeBtn();
   DoMate();
   MatchFinished = false;
   IsGS = false;
   ClearAll();
+  MatchRecords = [];
   El('WinBanner').className = 'WinBanner';
   El('MatchWrapper').style.display = 'none';
   El('SetupScreen').style.display  = 'block';
@@ -1774,15 +2104,38 @@ function UpdateBtnPaused() {
       if (sp) { if (Running) sp.classList.remove('IsPaused'); else sp.classList.add('IsPaused'); }
     });
   });
-  UpdateHajimeBtn();
+  // それまでボタンは IsPaused を当てない（IsDisabled で制御）
+  ['PcSoremadeBtn','SpSoremadeBtn'].forEach(id => {
+    const b = El(id); if (b) b.classList.remove('IsPaused');
+  });
+  UpdateCtrlBtns();
 }
 
 function UpdateHajimeBtn() {
   [El('PcHajimeBtn'), El('SpHajimeBtn')].forEach(b => {
     if (!b) return;
-    if (MatchFinished) b.classList.add('IsDisabled');
-    else               b.classList.remove('IsDisabled');
+    if (MatchFinished || Running) b.classList.add('IsDisabled');
+    else                          b.classList.remove('IsDisabled');
   });
+}
+
+function UpdateCtrlBtns() {
+  // まて：試合中のみ押せる
+  ['PcMateBtn','SpMateBtn'].forEach(id => {
+    const b = El(id);
+    if (!b) return;
+    if (Running) b.classList.remove('IsDisabled');
+    else         b.classList.add('IsDisabled');
+  });
+  // それまで：試合中 OR それまで後（MatchFinished）は押せる。試合開始前・リセット後はグレー
+  ['PcSoremadeBtn','SpSoremadeBtn'].forEach(id => {
+    const b = El(id);
+    if (!b) return;
+    if (b.dataset.resetMode === '1') return; // リセット表示中はそのまま
+    if (Running || MatchFinished) b.classList.remove('IsDisabled');
+    else                          b.classList.add('IsDisabled');
+  });
+  UpdateHajimeBtn();
 }
 
 function SetOsaeDisabled(side, disabled) {
@@ -1905,6 +2258,7 @@ function DeclareWin(side, method) {
   MatchFinished = true;
   WinnerSide    = side;
   DoMate();
+  if (IsGS) ShowExtensionEnd();
   UpdateLamps(side, true);
   UpdateHajimeBtn();
   StartEndSound();
@@ -1924,12 +2278,13 @@ function AddSc(side, key, val) {
   UpdateScores();
   if (val > 0) {
     const labels = { I:'一本！', W:'技あり！', Y:'有効！', S:'指導！', O:'抑え込み！' };
-    AddLog(side, Fmt(Remain) + ' ' + labels[key], key);
+    const timeLabel = IsGS ? '延長戦' : Fmt(Remain);
+    AddLog(side, timeLabel + ' ' + labels[key], key);
     if (key === 'I') DeclareWin(side, '一本');
     if (key === 'W' && Sc[side]['W'] >= 2) {
       Sc[side]['I']++;
       UpdateScores();
-      AddLog(side, Fmt(Remain) + ' 技あり合わせ一本！', 'I');
+      AddLog(side, (IsGS ? '延長戦' : Fmt(Remain)) + ' 技あり合わせ一本！', 'I');
       DeclareWin(side, '合わせ技一本');
     }
     if (key === 'S' && Sc[side]['S'] >= 3) {
@@ -1952,7 +2307,7 @@ function HandleYuko(side) {
     state.run = false;
     Sc[side]['Y']++;
     UpdateScores();
-    AddLog(side, Fmt(Remain) + ' 有効！（即判定）', 'Y');
+    AddLog(side, (IsGS ? '延長戦' : Fmt(Remain)) + ' 有効！（即判定）', 'Y');
     UpdateTimerDisplay(side, '--', '--', '');
     El(side + 'BtnY')?.classList.remove('IsCountingYuko');
     El('Sp' + SpSide(side) + 'BtnY')?.classList.remove('IsCountingYuko');
@@ -1995,7 +2350,7 @@ function StartCountTimer(side, type) {
         Sc[side]['Y']++;
         Sc[side]['O']++;
         UpdateScores();
-        AddLog(side, Fmt(Remain) + ' 有効（抑え込み' + n + '秒）', 'Y');
+        AddLog(side, (IsGS ? '延長戦' : Fmt(Remain)) + ' 有効（抑え込み' + n + '秒）', 'Y');
         UpdateTimerDisplay(side, '抑え込み', n + '秒', 'IsActiveYuko');
         if (IsGS) {
           clearInterval(TimerState[side].int); TimerState[side].run = false;
@@ -2012,12 +2367,12 @@ function StartCountTimer(side, type) {
         if (yL) Logs[side] = Logs[side].filter(e => e.id !== yL.id);
         Sc[side]['W']++;
         UpdateScores();
-        AddLog(side, Fmt(Remain) + ' 技あり（抑え込み' + n + '秒）', 'W');
+        AddLog(side, (IsGS ? '延長戦' : Fmt(Remain)) + ' 技あり（抑え込み' + n + '秒）', 'W');
         UpdateTimerDisplay(side, '抑え込み', n + '秒', 'IsActiveOsae');
         RenderLog(side);
         if (Sc[side]['W'] >= 2) {
           Sc[side]['I']++; UpdateScores();
-          AddLog(side, Fmt(Remain) + ' 技あり合わせ一本！', 'I');
+          AddLog(side, (IsGS ? '延長戦' : Fmt(Remain)) + ' 技あり合わせ一本！', 'I');
           clearInterval(TimerState[side].int); TimerState[side].run = false;
           UpdateTimerDisplay(side, '--', '--', ''); SetOsaeDisabled(side, false);
           TimerState[side] = { run:false, sec:0, int:null, type:'', osaePhase:'' };
@@ -2030,7 +2385,7 @@ function StartCountTimer(side, type) {
         const wL = Logs[side].find(e => e.key === 'W');
         if (wL) Logs[side] = Logs[side].filter(e => e.id !== wL.id);
         Sc[side]['I']++; UpdateScores();
-        AddLog(side, Fmt(Remain) + ' 一本（抑え込み' + n + '秒）', 'I');
+        AddLog(side, (IsGS ? '延長戦' : Fmt(Remain)) + ' 一本（抑え込み' + n + '秒）', 'I');
         RenderLog(side);
         clearInterval(TimerState[side].int); TimerState[side].run = false;
         UpdateTimerDisplay(side, '--', '--', ''); SetOsaeDisabled(side, false);
@@ -2041,7 +2396,7 @@ function StartCountTimer(side, type) {
       /* 有効カウント自動付与 */
       if (n >= Cfg.yukoThrowSec) {
         Sc[side]['Y']++; UpdateScores();
-        AddLog(side, Fmt(Remain) + ' 有効（' + n + '秒）', 'Y');
+        AddLog(side, (IsGS ? '延長戦' : Fmt(Remain)) + ' 有効（' + n + '秒）', 'Y');
         clearInterval(TimerState[side].int); TimerState[side].run = false;
         UpdateTimerDisplay(side, '--', '--', ''); SetOsaeDisabled(side, false);
         El(side + 'BtnY')?.classList.remove('IsCountingYuko');
@@ -2056,14 +2411,40 @@ function StopTimer(side) {
   const sec   = TimerState[side].sec;
   const type  = TimerState[side].type;
   const phase = TimerState[side].osaePhase;
+  const wasGS = IsGS;
+
+  // GS中の抑え込み解除 → それまで1回目と同じ動作（ブザー・延長終了・判定）
+  if (wasGS && !MatchFinished && type === 'osae') {
+    clearInterval(TimerState[side].int);
+    TimerState[side].run = false;
+    UpdateTimerDisplay(side, '--', '--', '');
+    TimerState[side] = { run: false, sec: 0, int: null, type: '', osaePhase: '' };
+    SetOsaeDisabled(side, false);
+    // それまで1回目と同じ：延長終了表示・まて・ブザー・判定
+    ShowExtensionEnd();
+    DoMate();
+    StartEndSound();
+    const r = Sc.red, w = Sc.white;
+    if      (r.I > w.I) DeclareWin('red',   '一本優勢（延長）');
+    else if (w.I > r.I) DeclareWin('white', '一本優勢（延長）');
+    else if (r.W > w.W) DeclareWin('red',   '技あり優勢（延長）');
+    else if (w.W > r.W) DeclareWin('white', '技あり優勢（延長）');
+    else if (r.S < w.S) DeclareWin('red',   '指導数優勢（延長）');
+    else if (w.S < r.S) DeclareWin('white', '指導数優勢（延長）');
+    else ShowDraw();
+    return;
+  }
+
+  // 通常の解除
   clearInterval(TimerState[side].int);
   TimerState[side].run = false;
   if (sec > 0) {
     if (type === 'osae') {
       Sc[side]['O']++; UpdateScores();
-      if (phase === 'waza')      AddLog(side, Fmt(Remain) + ' 抑え込み解除（' + sec + '秒）技あり', 'O', false);
-      else if (phase === 'yuko') AddLog(side, Fmt(Remain) + ' 抑え込み解除（' + sec + '秒）有効',   'O', false);
-      else                       AddLog(side, Fmt(Remain) + ' 抑え込み（' + sec + '秒）',            'O', true);
+      const tl = Fmt(Remain);
+      if (phase === 'waza')      AddLog(side, tl + ' 抑え込み解除（' + sec + '秒）技あり', 'O', false);
+      else if (phase === 'yuko') AddLog(side, tl + ' 抑え込み解除（' + sec + '秒）有効',   'O', false);
+      else                       AddLog(side, tl + ' 抑え込み（' + sec + '秒）',            'O', true);
     } else {
       const gray = sec < Cfg.yukoThrowSec;
       AddLog(side, Fmt(Remain) + ' 有効（' + sec + '秒）', gray ? null : 'Y', gray);
@@ -2092,5 +2473,14 @@ if ('serviceWorker' in navigator) {
   });
 }
 </script>
+
+<!-- ⚙️メニューをbody直下に配置（親のスタイル継承を切る） -->
+<div class="SpGearMenu" id="SpGearMenu">
+  <button class="SpGearMenuItem" id="GearMenuRule" onclick="OpenRule();CloseGearMenu()">📋 ルールブック</button>
+  <button class="SpGearMenuItem" id="GearMenuPDF" onclick="ExportPDF();CloseGearMenu()">📄 試合結果PDF</button>
+  <button class="SpGearMenuItem SpGearMenuItem--GS" id="SpGsMenuBtn" onclick="ToggleGS();CloseGearMenu()">⚡ GS開始</button>
+  <button class="SpGearMenuItem" id="GearMenuBack" onclick="DoBack();CloseGearMenu()">⚙️ 設定に戻る</button>
+  
+</div>
 </body>
 </html>
