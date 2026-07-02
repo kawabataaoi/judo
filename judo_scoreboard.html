@@ -204,15 +204,37 @@ body {
 }
 
 /* ===== 設定画面 ===== */
-.SetupScreen { padding: 16px; }
+.SetupScreen {
+  padding: 10px;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 .SetupCard {
   background: #fff;
   border: 1.5px solid #e0e0e0;
   border-radius: 12px;
   padding: 18px;
-  max-width: 400px;
+  max-width: 800px;
   margin: 0 auto;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+/* 横持ち：2カラムグリッド */
+.SetupGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+}
+.SetupCol { display: flex; flex-direction: column; gap: 0; }
+
+/* 横持ち時は2カラム */
+@media screen and (orientation: landscape) and (max-height: 600px) {
+  .SetupGrid {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
 }
 .SetupTitle {
   font-size: 16px;
@@ -1104,81 +1126,77 @@ body {
 <div class="SetupScreen" id="SetupScreen">
   <div class="SetupCard">
     <div class="SetupTitle">試合設定</div>
+    <div class="SetupGrid">
 
-    <!-- 画面サイズ -->
-    <div class="ScaleRow">
-      <label>画面サイズ</label>
-      <div class="ScaleInputWrap">
-        <input class="ScaleInput" id="ScaleInput" type="number" min="50" max="300" value="100" />
-        <span class="ScaleUnit">%</span>
+      <!-- 左カラム -->
+      <div class="SetupCol">
+        <div class="ScaleRow">
+          <label>画面サイズ</label>
+          <div class="ScaleInputWrap">
+            <input class="ScaleInput" id="ScaleInput" type="number" min="50" max="300" value="100" />
+            <span class="ScaleUnit">%</span>
+          </div>
+        </div>
+        <div class="SetupRow">
+          <label>試合時間</label>
+          <div class="SetupCtrl">
+            <button class="SetupAdjBtn" onclick="Adj('matchMin', -1)">−</button>
+            <span class="SetupVal" id="SetupMatchMin">4</span>
+            <span class="SetupUnit">分</span>
+            <button class="SetupAdjBtn" onclick="Adj('matchMin', 1)">+</button>
+            <span style="margin-left:6px;"></span>
+            <button class="SetupAdjBtn" onclick="Adj('matchSec', -10)">−</button>
+            <span class="SetupVal" id="SetupMatchSec">0</span>
+            <span class="SetupUnit">秒</span>
+            <button class="SetupAdjBtn" onclick="Adj('matchSec', 10)">+</button>
+          </div>
+        </div>
+        <div class="SetupRow">
+          <label>抑え込み 技あり</label>
+          <div class="SetupCtrl">
+            <button class="SetupAdjBtn" onclick="Adj('wazaSec', -1)">−</button>
+            <span class="SetupVal" id="SetupWazaSec">10</span>
+            <span class="SetupUnit">秒</span>
+            <button class="SetupAdjBtn" onclick="Adj('wazaSec', 1)">+</button>
+          </div>
+        </div>
+        <div class="SetupRow">
+          <label>抑え込み 有効</label>
+          <div class="SetupCtrl">
+            <button class="SetupAdjBtn" onclick="Adj('yukoSec', -1)">−</button>
+            <span class="SetupVal" id="SetupYukoSec">5</span>
+            <span class="SetupUnit">秒</span>
+            <button class="SetupAdjBtn" onclick="Adj('yukoSec', 1)">+</button>
+          </div>
+        </div>
       </div>
-    </div>
 
-    <!-- 試合時間 -->
-    <div class="SetupRow">
-      <label>試合時間</label>
-      <div class="SetupCtrl">
-        <button class="SetupAdjBtn" onclick="Adj('matchMin', -1)">−</button>
-        <span class="SetupVal" id="SetupMatchMin">4</span>
-        <span class="SetupUnit">分</span>
-        <button class="SetupAdjBtn" onclick="Adj('matchMin', 1)">+</button>
-        <span style="margin-left:8px;"></span>
-        <button class="SetupAdjBtn" onclick="Adj('matchSec', -10)">−</button>
-        <span class="SetupVal" id="SetupMatchSec">0</span>
-        <span class="SetupUnit">秒</span>
-        <button class="SetupAdjBtn" onclick="Adj('matchSec', 10)">+</button>
+      <!-- 右カラム -->
+      <div class="SetupCol">
+        <div class="SetupRow">
+          <label>試合記録機能</label>
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+            <input type="checkbox" id="RecordEnabled" checked style="width:18px;height:18px;accent-color:#185FA5;cursor:pointer;" />
+            <span style="font-size:13px;color:#185FA5;font-weight:600;">ON</span>
+          </label>
+        </div>
+        <div class="SetupRow">
+          <label>試合終了音</label>
+          <select class="EndSoundSelect" id="EndSoundSelect">
+            <option value="beep">🔔 ビープ音</option>
+            <option value="gong">🔊 ゴング</option>
+            <option value="bell">🔔 ベル</option>
+            <option value="buzzer">📣 ブザー</option>
+            <option value="none">🔇 なし</option>
+          </select>
+        </div>
+        <div class="LocalRulesSection">
+          <div class="LocalRulesTitle">ローカルルール</div>
+          <div id="CustomRulesList"></div>
+          <button class="AddRuleOpenBtn" onclick="OpenAddRule()">＋ ルールを追加</button>
+        </div>
       </div>
-    </div>
 
-    <!-- 抑え込み 技あり -->
-    <div class="SetupRow">
-      <label>抑え込み 技あり</label>
-      <div class="SetupCtrl">
-        <button class="SetupAdjBtn" onclick="Adj('wazaSec', -1)">−</button>
-        <span class="SetupVal" id="SetupWazaSec">10</span>
-        <span class="SetupUnit">秒</span>
-        <button class="SetupAdjBtn" onclick="Adj('wazaSec', 1)">+</button>
-      </div>
-    </div>
-
-    <!-- 抑え込み 有効 -->
-    <div class="SetupRow">
-      <label>抑え込み 有効</label>
-      <div class="SetupCtrl">
-        <button class="SetupAdjBtn" onclick="Adj('yukoSec', -1)">−</button>
-        <span class="SetupVal" id="SetupYukoSec">5</span>
-        <span class="SetupUnit">秒</span>
-        <button class="SetupAdjBtn" onclick="Adj('yukoSec', 1)">+</button>
-      </div>
-    </div>
-
-
-    <!-- 記録機能 -->
-    <div class="SetupRow">
-      <label>試合記録機能</label>
-      <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
-        <input type="checkbox" id="RecordEnabled" checked style="width:18px;height:18px;accent-color:#185FA5;cursor:pointer;" />
-        <span style="font-size:13px;color:#185FA5;font-weight:600;">ON</span>
-      </label>
-    </div>
-
-    <!-- 試合終了音 -->
-    <div class="SetupRow">
-      <label>試合終了音</label>
-      <select class="EndSoundSelect" id="EndSoundSelect">
-        <option value="beep">🔔 ビープ音</option>
-        <option value="gong">🔊 ゴング</option>
-        <option value="bell">🔔 ベル</option>
-        <option value="buzzer">📣 ブザー</option>
-        <option value="none">🔇 なし</option>
-      </select>
-    </div>
-
-    <!-- ローカルルール -->
-    <div class="LocalRulesSection">
-      <div class="LocalRulesTitle">ローカルルール</div>
-      <div id="CustomRulesList"></div>
-      <button class="AddRuleOpenBtn" onclick="OpenAddRule()">＋ ルールを追加</button>
     </div>
 
     <div class="SetupBtnRow">
