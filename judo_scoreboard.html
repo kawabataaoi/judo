@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <title>柔道スコアボード</title>
@@ -17,27 +17,11 @@
   <link rel="apple-touch-icon" href="./icons/icon-192.png" />
   <meta name="theme-color" content="#501313" />
   <style>
-
-
 /* ===== リセット ===== */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-}
-
-/* ===== 縦向き時に強制横回転 ===== */
-@media screen and (orientation: portrait) {
-  html {
-    transform: rotate(90deg);
-    transform-origin: left top;
-    width: 100vh;
-    height: 100vw;
-    overflow-x: hidden;
-    position: absolute;
-    top: 100%;
-    left: 0;
-  }
 }
 
 /* ===== ベース ===== */
@@ -46,6 +30,8 @@ body {
   background: #f2f2f7;
   color: #1a1a1a;
   -webkit-text-size-adjust: 100%;
+  overflow: hidden;
+  max-height: 100vh;
 }
 
 /* ===== モーダル共通 ===== */
@@ -204,37 +190,15 @@ body {
 }
 
 /* ===== 設定画面 ===== */
-.SetupScreen {
-  padding: 10px;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+.SetupScreen { padding: 16px; }
 .SetupCard {
   background: #fff;
   border: 1.5px solid #e0e0e0;
   border-radius: 12px;
   padding: 18px;
-  max-width: 800px;
+  max-width: 400px;
   margin: 0 auto;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-}
-
-/* 横持ち：2カラムグリッド */
-.SetupGrid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 0;
-}
-.SetupCol { display: flex; flex-direction: column; gap: 0; }
-
-/* 横持ち時は2カラム */
-@media screen and (orientation: landscape) and (max-height: 600px) {
-  .SetupGrid {
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-  }
 }
 .SetupTitle {
   font-size: 16px;
@@ -599,31 +563,6 @@ body {
 /* ===== スマホ版 ===== */
 .SpLayout { display: none; padding: 4px; }
 
-/* ===== 縦持ち時に試合画面を強制横向き（iOS対応） ===== */
-@media screen and (orientation: portrait) and (max-width: 1099px) {
-  #MatchWrapper {
-    transform-origin: top left;
-    transform: rotate(90deg) translateY(-100%);
-    width: 100vh;   /* 回転後の幅 = 画面の高さ */
-    height: 100vw;  /* 回転後の高さ = 画面の幅 */
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 100;
-    overflow: hidden;
-  }
-}
-
-/* 横向きは通常表示 */
-@media screen and (orientation: landscape) {
-  #MatchWrapper {
-    transform: none;
-    width: auto;
-    height: auto;
-    position: static;
-  }
-}
-
 /*
   上部バー：
   - コンテナ全体 position:relative, 固定height
@@ -926,6 +865,151 @@ body {
 }
 .SpLogDelBtn:hover { color: #A32D2D; }
 
+/* ===== スマホ横向き専用 設定画面 ===== */
+.SetupScreenSp {
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f2f2f7;
+  padding: env(safe-area-inset-top, 8px) env(safe-area-inset-right, 12px) env(safe-area-inset-bottom, 8px) env(safe-area-inset-left, 12px);
+  padding-top: max(env(safe-area-inset-top), 10px);
+  padding-bottom: max(env(safe-area-inset-bottom), 10px);
+  padding-left: max(env(safe-area-inset-left), 12px);
+  padding-right: max(env(safe-area-inset-right), 12px);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+.SpSetupWrap {
+  width: 100%;
+  max-width: 860px;
+  height: 100%;
+  max-height: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr auto;
+  gap: 8px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 12px 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.10);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+.SpSetupCol {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  min-height: 0;
+}
+.SpSetupTitle {
+  font-size: 12px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 3px;
+  padding-bottom: 3px;
+  border-bottom: 2px solid #501313;
+  flex-shrink: 0;
+}
+.SpSetupRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 8px;
+  background: #fafafa;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.SpSetupLabel {
+  font-size: 12px;
+  color: #444;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+.SpSetupCtrl {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.SpSetupBtn {
+  width: 28px;
+  height: 28px;
+  border: 1px solid #d0d0d0;
+  border-radius: 6px;
+  background: #fff;
+  color: #333;
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.SpSetupBtn:hover { background: #f0f0f0; }
+.SpSetupVal {
+  font-size: 16px;
+  font-weight: 700;
+  min-width: 24px;
+  text-align: center;
+  color: #1a1a1a;
+}
+.SpSetupUnit { font-size: 11px; color: #888; }
+.SpSetupSelect {
+  padding: 5px 8px;
+  border: 1px solid #d0d0d0;
+  border-radius: 6px;
+  font-size: 12px;
+  background: #fff;
+  color: #333;
+  cursor: pointer;
+}
+.SpSetupSmallBtn {
+  padding: 5px 10px;
+  border: 1.5px dashed #bbb;
+  border-radius: 6px;
+  background: #fff;
+  color: #666;
+  font-size: 12px;
+  cursor: pointer;
+}
+.SpSetupSmallBtn:hover { border-color: #185FA5; color: #185FA5; }
+.SpSetupBtns {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.SpSetupRuleBtn {
+  padding: 10px 14px;
+  background: #f0f0f0;
+  color: #444;
+  border: 1px solid #d0d0d0;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.SpSetupStartBtn {
+  flex: 1;
+  padding: 12px;
+  background: #501313;
+  color: #FCEBEB;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
 /* 試合終了音セレクト */
 .EndSoundSelect {
   padding: 6px 10px;
@@ -961,33 +1045,6 @@ body {
   border-color: #185FA5;
 }
 
-
-/* ===== スマホ縦向き時に試合画面を強制横向き ===== */
-@media screen and (orientation: portrait) and (max-width: 1099px) {
-  #MatchWrapper {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vh;   /* 高さ分を幅に */
-    height: 100vw;  /* 幅分を高さに */
-    transform: rotate(90deg);
-    transform-origin: top left;
-    margin-top: 100vw; /* 回転後の位置補正 */
-    overflow: hidden;
-    z-index: 100;
-  }
-}
-
-/* 横向きのときは通常表示 */
-@media screen and (orientation: landscape) {
-  #MatchWrapper {
-    position: static;
-    width: 100%;
-    height: auto;
-    transform: none;
-    margin-top: 0;
-  }
-}
 </style>
 </head>
 <body>
@@ -1126,83 +1183,173 @@ body {
 <div class="SetupScreen" id="SetupScreen">
   <div class="SetupCard">
     <div class="SetupTitle">試合設定</div>
-    <div class="SetupGrid">
 
-      <!-- 左カラム -->
-      <div class="SetupCol">
-        <div class="ScaleRow">
-          <label>画面サイズ</label>
-          <div class="ScaleInputWrap">
-            <input class="ScaleInput" id="ScaleInput" type="number" min="50" max="300" value="100" />
-            <span class="ScaleUnit">%</span>
-          </div>
-        </div>
-        <div class="SetupRow">
-          <label>試合時間</label>
-          <div class="SetupCtrl">
-            <button class="SetupAdjBtn" onclick="Adj('matchMin', -1)">−</button>
-            <span class="SetupVal" id="SetupMatchMin">4</span>
-            <span class="SetupUnit">分</span>
-            <button class="SetupAdjBtn" onclick="Adj('matchMin', 1)">+</button>
-            <span style="margin-left:6px;"></span>
-            <button class="SetupAdjBtn" onclick="Adj('matchSec', -10)">−</button>
-            <span class="SetupVal" id="SetupMatchSec">0</span>
-            <span class="SetupUnit">秒</span>
-            <button class="SetupAdjBtn" onclick="Adj('matchSec', 10)">+</button>
-          </div>
-        </div>
-        <div class="SetupRow">
-          <label>抑え込み 技あり</label>
-          <div class="SetupCtrl">
-            <button class="SetupAdjBtn" onclick="Adj('wazaSec', -1)">−</button>
-            <span class="SetupVal" id="SetupWazaSec">10</span>
-            <span class="SetupUnit">秒</span>
-            <button class="SetupAdjBtn" onclick="Adj('wazaSec', 1)">+</button>
-          </div>
-        </div>
-        <div class="SetupRow">
-          <label>抑え込み 有効</label>
-          <div class="SetupCtrl">
-            <button class="SetupAdjBtn" onclick="Adj('yukoSec', -1)">−</button>
-            <span class="SetupVal" id="SetupYukoSec">5</span>
-            <span class="SetupUnit">秒</span>
-            <button class="SetupAdjBtn" onclick="Adj('yukoSec', 1)">+</button>
-          </div>
-        </div>
+    <!-- 画面サイズ -->
+    <div class="ScaleRow">
+      <label>画面サイズ</label>
+      <div class="ScaleInputWrap">
+        <input class="ScaleInput" id="ScaleInput" type="number" min="50" max="300" value="100" />
+        <span class="ScaleUnit">%</span>
       </div>
+    </div>
 
-      <!-- 右カラム -->
-      <div class="SetupCol">
-        <div class="SetupRow">
-          <label>試合記録機能</label>
-          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
-            <input type="checkbox" id="RecordEnabled" checked style="width:18px;height:18px;accent-color:#185FA5;cursor:pointer;" />
-            <span style="font-size:13px;color:#185FA5;font-weight:600;">ON</span>
-          </label>
-        </div>
-        <div class="SetupRow">
-          <label>試合終了音</label>
-          <select class="EndSoundSelect" id="EndSoundSelect">
-            <option value="beep">🔔 ビープ音</option>
-            <option value="gong">🔊 ゴング</option>
-            <option value="bell">🔔 ベル</option>
-            <option value="buzzer">📣 ブザー</option>
-            <option value="none">🔇 なし</option>
-          </select>
-        </div>
-        <div class="LocalRulesSection">
-          <div class="LocalRulesTitle">ローカルルール</div>
-          <div id="CustomRulesList"></div>
-          <button class="AddRuleOpenBtn" onclick="OpenAddRule()">＋ ルールを追加</button>
-        </div>
+    <!-- 試合時間 -->
+    <div class="SetupRow">
+      <label>試合時間</label>
+      <div class="SetupCtrl">
+        <button class="SetupAdjBtn" onclick="Adj('matchMin', -1)">−</button>
+        <span class="SetupVal" id="SetupMatchMin">4</span>
+        <span class="SetupUnit">分</span>
+        <button class="SetupAdjBtn" onclick="Adj('matchMin', 1)">+</button>
+        <span style="margin-left:8px;"></span>
+        <button class="SetupAdjBtn" onclick="Adj('matchSec', -10)">−</button>
+        <span class="SetupVal" id="SetupMatchSec">0</span>
+        <span class="SetupUnit">秒</span>
+        <button class="SetupAdjBtn" onclick="Adj('matchSec', 10)">+</button>
       </div>
+    </div>
 
+    <!-- 抑え込み 技あり -->
+    <div class="SetupRow">
+      <label>抑え込み 技あり</label>
+      <div class="SetupCtrl">
+        <button class="SetupAdjBtn" onclick="Adj('wazaSec', -1)">−</button>
+        <span class="SetupVal" id="SetupWazaSec">10</span>
+        <span class="SetupUnit">秒</span>
+        <button class="SetupAdjBtn" onclick="Adj('wazaSec', 1)">+</button>
+      </div>
+    </div>
+
+    <!-- 抑え込み 有効 -->
+    <div class="SetupRow">
+      <label>抑え込み 有効</label>
+      <div class="SetupCtrl">
+        <button class="SetupAdjBtn" onclick="Adj('yukoSec', -1)">−</button>
+        <span class="SetupVal" id="SetupYukoSec">5</span>
+        <span class="SetupUnit">秒</span>
+        <button class="SetupAdjBtn" onclick="Adj('yukoSec', 1)">+</button>
+      </div>
+    </div>
+
+
+    <!-- 記録機能 -->
+    <div class="SetupRow">
+      <label>試合記録機能</label>
+      <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+        <input type="checkbox" id="RecordEnabled" checked style="width:18px;height:18px;accent-color:#185FA5;cursor:pointer;" />
+        <span style="font-size:13px;color:#185FA5;font-weight:600;">ON</span>
+      </label>
+    </div>
+
+    <!-- 試合終了音 -->
+    <div class="SetupRow">
+      <label>試合終了音</label>
+      <select class="EndSoundSelect" id="EndSoundSelect">
+        <option value="beep">🔔 ビープ音</option>
+        <option value="gong">🔊 ゴング</option>
+        <option value="bell">🔔 ベル</option>
+        <option value="buzzer">📣 ブザー</option>
+        <option value="none">🔇 なし</option>
+      </select>
+    </div>
+
+    <!-- ローカルルール -->
+    <div class="LocalRulesSection">
+      <div class="LocalRulesTitle">ローカルルール</div>
+      <div id="CustomRulesList"></div>
+      <button class="AddRuleOpenBtn" onclick="OpenAddRule()">＋ ルールを追加</button>
     </div>
 
     <div class="SetupBtnRow">
       <button class="SetupRuleBtn" onclick="OpenRule()">📋 公式ルール</button>
       <button class="SetupStartBtn" onclick="GoMatch()">試合開始</button>
     </div>
+  </div>
+</div>
+
+<!-- ===== スマホ横向き専用 設定画面 ===== -->
+<div class="SetupScreenSp" id="SetupScreenSp" style="display:none;">
+  <div class="SpSetupWrap">
+
+    <!-- 左カラム：基本設定 -->
+    <div class="SpSetupCol">
+      <div class="SpSetupTitle">試合設定</div>
+
+      <div class="SpSetupRow">
+        <span class="SpSetupLabel">試合時間</span>
+        <div class="SpSetupCtrl">
+          <button class="SpSetupBtn" onclick="Adj('matchMin',-1)">−</button>
+          <span class="SpSetupVal" id="SpSetupMatchMin">4</span>
+          <span class="SpSetupUnit">分</span>
+          <button class="SpSetupBtn" onclick="Adj('matchMin',1)">+</button>
+          <span style="width:8px;display:inline-block;"></span>
+          <button class="SpSetupBtn" onclick="Adj('matchSec',-10)">−</button>
+          <span class="SpSetupVal" id="SpSetupMatchSec">0</span>
+          <span class="SpSetupUnit">秒</span>
+          <button class="SpSetupBtn" onclick="Adj('matchSec',10)">+</button>
+        </div>
+      </div>
+
+      <div class="SpSetupRow">
+        <span class="SpSetupLabel">抑え込み 技あり</span>
+        <div class="SpSetupCtrl">
+          <button class="SpSetupBtn" onclick="Adj('wazaSec',-1)">−</button>
+          <span class="SpSetupVal" id="SpSetupWazaSec">10</span>
+          <span class="SpSetupUnit">秒</span>
+          <button class="SpSetupBtn" onclick="Adj('wazaSec',1)">+</button>
+        </div>
+      </div>
+
+      <div class="SpSetupRow">
+        <span class="SpSetupLabel">抑え込み 有効</span>
+        <div class="SpSetupCtrl">
+          <button class="SpSetupBtn" onclick="Adj('yukoSec',-1)">−</button>
+          <span class="SpSetupVal" id="SpSetupYukoSec">5</span>
+          <span class="SpSetupUnit">秒</span>
+          <button class="SpSetupBtn" onclick="Adj('yukoSec',1)">+</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 右カラム：オプション -->
+    <div class="SpSetupCol">
+      <div class="SpSetupTitle">オプション</div>
+
+      <div class="SpSetupRow">
+        <span class="SpSetupLabel">試合記録機能</span>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+          <input type="checkbox" id="SpRecordEnabled" checked
+            style="width:18px;height:18px;accent-color:#185FA5;cursor:pointer;"
+            onchange="El('RecordEnabled').checked=this.checked" />
+          <span style="font-size:13px;color:#185FA5;font-weight:600;">ON</span>
+        </label>
+      </div>
+
+      <div class="SpSetupRow">
+        <span class="SpSetupLabel">試合終了音</span>
+        <select class="SpSetupSelect" id="SpEndSoundSelect"
+          onchange="El('EndSoundSelect').value=this.value">
+          <option value="beep">🔔 ビープ音</option>
+          <option value="gong">🔊 ゴング</option>
+          <option value="bell">🔔 ベル</option>
+          <option value="buzzer">📣 ブザー</option>
+          <option value="none">🔇 なし</option>
+        </select>
+      </div>
+
+      <div class="SpSetupRow">
+        <span class="SpSetupLabel">ローカルルール</span>
+        <button class="SpSetupSmallBtn" onclick="OpenAddRule()">＋ 追加</button>
+      </div>
+      <div id="SpCustomRulesList" style="padding:0 4px;"></div>
+    </div>
+
+    <!-- 下部ボタン -->
+    <div class="SpSetupBtns">
+      <button class="SpSetupRuleBtn" onclick="OpenRule()">📋 公式ルール</button>
+      <button class="SpSetupStartBtn" onclick="GoMatch()">試合開始</button>
+    </div>
+
   </div>
 </div>
 
@@ -1475,6 +1622,7 @@ let Sc = {
 let Logs = { red: [], white: [] };
 let LogIdCounter = 0;
 let IsMobile = false;
+let IsSpLandscape = false;
 
 /* ===== ユーティリティ ===== */
 function Fmt(sec) {
@@ -1493,72 +1641,31 @@ function SpSide(side) {
 function CheckLayout() {
   const w = window.innerWidth;
   const h = window.innerHeight;
-  // 横向きスマホ判定：幅が1100px未満 OR (幅が1100px未満かつ高さが600px未満=横向きスマホ)
-  // Galaxy Ultra横向き: ~1080px幅, iPhone Pro Max横向き: ~932px幅
-  // 横向きスマホ判定：幅>高さ（横向き） かつ 高さが600px未満（タブレット・PCは高さがもっとある）
   const isLandscapePhone = w > h && h < 600;
-  // 縦向きスマホ：幅1100px未満
-  // 横向きスマホ：Galaxy Ultra ~480px高, iPhone Pro Max ~430px高
   IsMobile = w < 1100 || isLandscapePhone;
-  if (El('MatchWrapper').style.display === 'none') return;
-  El('PcLayout').style.display = IsMobile ? 'none' : 'block';
-  El('SpLayout').style.display = IsMobile ? 'block' : 'none';
-}
-window.addEventListener('resize', () => { CheckLayout(); ApplyRotation(); });
-window.addEventListener('orientationchange', () => { setTimeout(() => { CheckLayout(); ApplyRotation(); }, 300); });
+  IsSpLandscape = IsMobile && w > h; // スマホ横向き
 
-function ApplyRotation() {
-  const wrap = El('MatchWrapper');
-  if (!wrap || wrap.style.display === 'none') return;
-
-  if (!IsMobile) {
-    // PCは回転なし
-    wrap.style.cssText = wrap.style.cssText
-      .replace(/position:[^;]+;/g, '')
-      .replace(/top:[^;]+;/g, '')
-      .replace(/left:[^;]+;/g, '')
-      .replace(/width:[^;]+;/g, '')
-      .replace(/height:[^;]+;/g, '')
-      .replace(/transform:[^;]+;/g, '')
-      .replace(/margin:[^;]+;/g, '');
-    wrap.style.position = '';
-    wrap.style.transform = '';
-    wrap.style.width = '';
-    wrap.style.height = '';
-    wrap.style.top = '';
-    wrap.style.left = '';
+  // 設定画面の切り替え
+  const setupVisible = El('SetupScreen').style.display !== 'none'
+                    || El('SetupScreenSp').style.display !== 'none';
+  if (setupVisible || (El('MatchWrapper').style.display === 'none')) {
+    if (IsSpLandscape) {
+      El('SetupScreen').style.display = 'none';
+      El('SetupScreenSp').style.display = 'flex';
+    } else {
+      El('SetupScreen').style.display = 'block';
+      El('SetupScreenSp').style.display = 'none';
+    }
+    SyncSpSetup();
     return;
   }
 
-  const isPortrait = window.innerHeight > window.innerWidth;
-  if (isPortrait) {
-    const sw = window.innerWidth;
-    const sh = window.innerHeight;
-    wrap.style.position = 'fixed';
-    wrap.style.top = '0';
-    wrap.style.left = '0';
-    wrap.style.width = sh + 'px';
-    wrap.style.height = sw + 'px';
-    wrap.style.transform = `rotate(90deg) translateY(-${sw}px)`;
-    wrap.style.transformOrigin = 'top left';
-    wrap.style.margin = '0';
-    wrap.style.zIndex = '100';
-    wrap.style.overflow = 'hidden';
-    document.body.style.overflow = 'hidden';
-  } else {
-    wrap.style.position = '';
-    wrap.style.top = '';
-    wrap.style.left = '';
-    wrap.style.width = '';
-    wrap.style.height = '';
-    wrap.style.transform = '';
-    wrap.style.transformOrigin = '';
-    wrap.style.margin = '';
-    wrap.style.zIndex = '';
-    wrap.style.overflow = '';
-    document.body.style.overflow = '';
-  }
+  // 試合画面の切り替え
+  El('PcLayout').style.display = IsMobile ? 'none' : 'block';
+  El('SpLayout').style.display = IsMobile ? 'block' : 'none';
 }
+window.addEventListener('resize', CheckLayout);
+window.addEventListener('orientationchange', () => { setTimeout(CheckLayout, 100); });
 
 function LockLandscape() {
   // スマホ版で横向きに固定
@@ -1689,6 +1796,28 @@ function ToggleCustomRule(i) {
   CustomRules[i].enabled = !CustomRules[i].enabled;
   // 有効になった場合はCfgに反映、無効なら元に戻す（デフォルト値は変えない）
   RenderCustomRules();
+}
+
+/* ===== スマホ横向き設定画面の同期 ===== */
+function SyncSpSetup() {
+  // 通常設定 → スマホ横向き設定に値をコピー
+  const pairs = [
+    ['SetupMatchMin', 'SpSetupMatchMin'],
+    ['SetupMatchSec', 'SpSetupMatchSec'],
+    ['SetupWazaSec',  'SpSetupWazaSec'],
+    ['SetupYukoSec',  'SpSetupYukoSec'],
+  ];
+  pairs.forEach(([src, dst]) => {
+    const s = El(src), d = El(dst);
+    if (s && d) d.textContent = s.textContent;
+  });
+  const rec = El('RecordEnabled'), spRec = El('SpRecordEnabled');
+  if (rec && spRec) spRec.checked = rec.checked;
+  const snd = El('EndSoundSelect'), spSnd = El('SpEndSoundSelect');
+  if (snd && spSnd) spSnd.value = snd.value;
+  // ローカルルールも同期
+  const src = El('CustomRulesList'), dst = El('SpCustomRulesList');
+  if (src && dst) dst.innerHTML = src.innerHTML;
 }
 
 /* ===== 設定値 ± ===== */
@@ -1935,8 +2064,10 @@ function PlaySoundOnce(type) {
 function Adj(key, delta) {
   const lim = { matchMin: [0, 20], matchSec: [0, 50], wazaSec: [3, 30], yukoSec: [1, 20], yukoThrowSec: [1, 20] };
   const ids  = { matchMin: 'SetupMatchMin', matchSec: 'SetupMatchSec', wazaSec: 'SetupWazaSec', yukoSec: 'SetupYukoSec', yukoThrowSec: 'SetupYukoThrowSec' };
+  const spIds = { matchMin: 'SpSetupMatchMin', matchSec: 'SpSetupMatchSec', wazaSec: 'SpSetupWazaSec', yukoSec: 'SpSetupYukoSec', yukoThrowSec: null };
   Cfg[key] = Math.min(lim[key][1], Math.max(lim[key][0], Cfg[key] + delta));
   El(ids[key]).textContent = Cfg[key];
+  if (spIds[key]) { const e = El(spIds[key]); if (e) e.textContent = Cfg[key]; }
 }
 
 /* ===== 試合開始 ===== */
@@ -1945,11 +2076,11 @@ function GoMatch() {
   IsGS = false;
   MatchFinished = false;
   WinnerSide = null;
-  El('SetupScreen').style.display = 'none';
-  El('MatchWrapper').style.display = 'block';
+  El('SetupScreen').style.display   = 'none';
+  El('SetupScreenSp').style.display = 'none';
+  El('MatchWrapper').style.display  = 'block';
   CheckLayout();
   if (IsMobile) LockLandscape();
-  ApplyRotation();
   ['PcGsTag', 'SpGsTag'].forEach(id => { const e = El(id); if (e) e.style.display = 'none'; });
   ApplyScale();
   UpdateTimer();
@@ -2081,8 +2212,19 @@ function PauseTimer(side) {
   TimerState[side].run = false;
 }
 
+function SetSoremadeAsStopBtn() {
+  // 試合終了時にそれまでボタンを「音停止」に変更
+  ['PcSoremadeBtn','SpSoremadeBtn'].forEach(id => {
+    const b = El(id);
+    if (!b) return;
+    b.classList.remove('IsDisabled');
+    b.textContent = '音停止';
+    b.dataset.resetMode = 'stop';
+    b.onclick = () => { DoStopSound(); };
+  });
+}
+
 function DoSoremade() {
-  // MatchFinished時はそれぞれのボタンのonclickで処理するので何もしない
   if (MatchFinished) return;
   if (IsGS) ShowExtensionEnd();
   DoMate();
@@ -2115,6 +2257,7 @@ function ShowDraw() {
   MatchFinished = true;
   if (IsGS) ShowExtensionEnd();
   StartEndSound();
+  SetSoremadeAsStopBtn();
 }
 
 function ClearAll() {
@@ -2217,18 +2360,14 @@ function ExecuteBack() {
   MatchRecords = [];
   El('WinBanner').className = 'WinBanner';
   El('MatchWrapper').style.display = 'none';
-  El('SetupScreen').style.display  = 'block';
-  // 回転リセット
-  const wrap = El('MatchWrapper');
-  if (wrap) {
-    wrap.style.position = '';
-    wrap.style.transform = '';
-    wrap.style.width = '';
-    wrap.style.height = '';
-    wrap.style.top = '';
-    wrap.style.left = '';
+  if (IsSpLandscape) {
+    El('SetupScreenSp').style.display = 'flex';
+    El('SetupScreen').style.display   = 'none';
+    SyncSpSetup();
+  } else {
+    El('SetupScreen').style.display   = 'block';
+    El('SetupScreenSp').style.display = 'none';
   }
-  document.body.style.overflow = '';
   UnlockOrientation();
 }
 
@@ -2413,6 +2552,7 @@ function DeclareWin(side, method) {
   UpdateLamps(side, true);
   UpdateHajimeBtn();
   StartEndSound();
+  SetSoremadeAsStopBtn();
 }
 
 function CloseWin() {
@@ -2612,6 +2752,7 @@ function StopTimer(side) {
 Remain = Cfg.matchMin * 60;
 UpdateTimer();
 CheckLayout();
+SyncSpSetup();
 
 </script>
 
